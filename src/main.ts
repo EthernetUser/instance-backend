@@ -6,12 +6,12 @@ const start = async () => {
     try {
         const app = await NestFactory.create(AppModule);
         const PORT = process.env.PORT || 5000;
-        app.init();
+        await app.init();
 
         app.useGlobalPipes(new ValidationPipe());
         app.enableCors();
 
-        app.listen(PORT, () => console.log(`Server started on PORT ${PORT}`));
+        await app.listen(PORT, () => console.log(`Server started on PORT ${PORT}`));
     } catch (error) {
         console.log(error);
     }
