@@ -20,6 +20,7 @@ export class VisitorsService {
         else throw new HttpException('Не удалось найти участников занятия', HttpStatus.BAD_REQUEST);
     }
 
+    //TODO finish setVisitor method
     async setVisitor(dto: CreateVisitorDTO, token: string) {
         if (!token) {
             return this.createVisitor(dto);
