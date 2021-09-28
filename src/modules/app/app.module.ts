@@ -11,6 +11,7 @@ import { LessonsModule } from '../lessons/lessons.module';
 import { UsersModule } from '../users/users.module';
 import { VisitorsModule } from '../visitors/visitors.module';
 import { AppController } from './app.controller';
+import { CommentsModule } from '../comments/comments.module';
 
 @Module({
     controllers: [AppController],
@@ -34,6 +35,7 @@ import { AppController } from './app.controller';
         LessonsModule,
         AuthModule,
         VisitorsModule,
+        CommentsModule,
     ],
     providers: [],
 })
