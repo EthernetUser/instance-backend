@@ -6,6 +6,8 @@ import { User } from '../../models/user.model';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { hash } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
+import { GenerateResponse } from '../../helpers/generateResponse';
+import { IResponse } from '../../interfaces/IResponse';
 
 @Injectable()
 export class AuthService {
@@ -16,12 +18,18 @@ export class AuthService {
         if (!IsValid)
             throw new HttpException('Пользователь с такое почтой уже зарегистрирован', HttpStatus.BAD_REQUEST);
         const user = await this.usersService.createUser({ ...dto, password: await hash(dto.password, 10) });
-        return this.generateToken(user);
+        return new GenerateResponse({
+            message: 'Вы были зарегистрированны',
+            data: this.generateToken(user),
+        }) as IResponse<{ token: string }>;
     }
 
     async login(dto: LoginDTO) {
         const user = await this.usersService.validateUser(dto);
-        return this.generateToken(user);
+        return new GenerateResponse({
+            message: 'Вы вошли в аккаунт',
+            data: this.generateToken(user),
+        }) as IResponse<{ token: string }>;
     }
 
     async generateToken({ email, id, role }: User) {
