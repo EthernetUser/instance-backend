@@ -30,10 +30,10 @@ export class UsersService {
         return !user;
     }
 
-    async validateUser(dto: LoginDTO): Promise<User> {
+    async validateUser(dto: LoginDTO): Promise<User> | Promise<null> {
         const user = await this.getUserByEmail(dto.email);
         const passwordEquals = await compare(dto.password, user.password);
         if (user && passwordEquals) return user;
-        else throw new HttpException('Не верные данные', HttpStatus.FORBIDDEN);
+        else return null;
     }
 }

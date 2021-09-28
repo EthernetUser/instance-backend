@@ -9,23 +9,21 @@ export class LessonsController {
 
     @Get('/:id')
     async getLesson(@Param('id') id: string) {
-        const num_id = +id;
-        return this.lessonsService.getLessonById(num_id);
+        return await this.lessonsService.getLessonById(Number(id));
     }
 
     @Post('/create')
     async createLesson(@Body() dto: CreateLessonDTO) {
-        return this.lessonsService.createLesson(dto);
+        return await this.lessonsService.createLesson(dto);
     }
 
     @Put('/update')
     async updateLesson(@Body() dto: UpdateLessonDTO) {
-        return this.lessonsService.updateLesson(dto);
+        return await this.lessonsService.updateLesson(dto);
     }
 
     @Delete('/delete/:id')
     async deleteLesson(@Param('id') id: string) {
-        const num_id = +id;
-        return this.lessonsService.deleteLesson(num_id);
+        return await this.lessonsService.deleteLesson(Number(id));
     }
 }
