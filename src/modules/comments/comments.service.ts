@@ -19,7 +19,7 @@ export class CommentsService {
     constructor(@InjectModel(Comment) private commentsRepository: typeof Comment) {}
 
     async getCommentsByLessonId(lessonId: number) {
-        const comments = this.commentsRepository.findAll({ where: { lessonId } });
+        const comments = await this.commentsRepository.findAll({ where: { lessonId } });
         if (comments)
             return new GenerateResponse({
                 data: { comments },
@@ -33,7 +33,7 @@ export class CommentsService {
     }
 
     async getCommentsByUserId(userId: number) {
-        const comments = this.commentsRepository.findAll({ where: { userId } });
+        const comments = await this.commentsRepository.findAll({ where: { userId } });
         if (comments)
             return new GenerateResponse({
                 data: { comments },
@@ -47,7 +47,7 @@ export class CommentsService {
     }
 
     async createComment(dto: CreateCommentDTO) {
-        const comment = this.commentsRepository.create(dto);
+        const comment = await this.commentsRepository.create(dto);
         if (comment)
             return new GenerateResponse({
                 message: COMMENT_WAS_CREATED,
@@ -63,7 +63,7 @@ export class CommentsService {
     }
 
     async updateComment(dto: UpdateCommentDTO) {
-        const comment = this.commentsRepository.update(dto, { where: { id: dto.id } });
+        const comment = await this.commentsRepository.update(dto, { where: { id: dto.id } });
         if (comment)
             return new GenerateResponse({
                 message: COMMENT_WAS_UPDATED,
@@ -79,7 +79,7 @@ export class CommentsService {
     }
 
     async deleteComment(id: number) {
-        const result = this.commentsRepository.destroy({ where: { id } });
+        const result = await this.commentsRepository.destroy({ where: { id } });
         if (result)
             return new GenerateResponse({
                 message: COMMENT_WAS_DELETED,
