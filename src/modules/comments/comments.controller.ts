@@ -7,23 +7,28 @@ import { UpdateCommentDTO } from '../../dto/updateComment.dto';
 export class CommentsController {
     constructor(private commentsService: CommentsService) {}
 
-    @Get('/:lessonId')
-    async getCommentsByLessonId(@Param('lessonId') lessonId: number) {
-        return this.commentsService.getCommentsByLessonId(lessonId);
+    @Get('/lesson/:id')
+    async getCommentsByLessonId(@Param('id') id: string) {
+        return await this.commentsService.getCommentsByLessonId(Number(id));
+    }
+
+    @Get('/user/:id')
+    async getCommentsByUserId(@Param('id') id: string) {
+        return await this.commentsService.getCommentsByUserId(Number(id));
     }
 
     @Post('/create')
     async createComment(@Body() dto: CreateCommentDTO) {
-        return this.commentsService.createComment(dto);
+        return await this.commentsService.createComment(dto);
     }
 
     @Put('/update')
     async updateComment(@Body() dto: UpdateCommentDTO) {
-        return this.commentsService.updateComment(dto);
+        return await this.commentsService.updateComment(dto);
     }
 
     @Delete('/delete/:id')
-    async deleteComment(@Param('id') id: number) {
-        return this.commentsService.deleteComment(id);
+    async deleteComment(@Param('id') id: string) {
+        return await this.commentsService.deleteComment(Number(id));
     }
 }
