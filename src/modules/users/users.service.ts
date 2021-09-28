@@ -25,6 +25,7 @@ export class UsersService {
             return new GenerateResponse({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
+                //TODO make const from strings
                 message: 'Пользователь не найден',
                 data: null,
             }) as IResponse<null>;
