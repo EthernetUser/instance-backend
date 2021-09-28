@@ -8,6 +8,7 @@ import { hash } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { GenerateResponse } from '../../helpers/generateResponse';
 import { IResponse } from '../../interfaces/IResponse';
+import { ITokenResponse } from '../../interfaces/ITokenResponse';
 
 const THIS_EMAIL_WAS_ALREADY_REGISTERED = 'Данная почта уже зарегистрирована';
 const SUCCESSFUL_REGISTRATION = 'Вы были зарегистрированны';
@@ -19,7 +20,7 @@ const UNSUCCESSFUL_LOGIN = 'Ошибка входа, данные не верн�
 export class AuthService {
     constructor(private usersService: UsersService, private jwtService: JwtService) {}
 
-    async registration(dto: RegistrationDTO) {
+    async registration(dto: RegistrationDTO): Promise<IResponse<ITokenResponse | null>> {
         const IsValid = await this.usersService.validateNewUser(dto.email);
         if (!IsValid)
             return new GenerateResponse({
@@ -33,7 +34,7 @@ export class AuthService {
             return new GenerateResponse({
                 message: SUCCESSFUL_REGISTRATION,
                 data: await this.generateToken(user),
-            }) as IResponse<{ token: string }>;
+            }) as IResponse<ITokenResponse>;
         else
             return new GenerateResponse({
                 status: HttpStatus.BAD_REQUEST,
@@ -43,13 +44,13 @@ export class AuthService {
             }) as IResponse<null>;
     }
 
-    async login(dto: LoginDTO) {
+    async login(dto: LoginDTO): Promise<IResponse<ITokenResponse | null>> {
         const user = await this.usersService.validateUser(dto);
         if (user)
             return new GenerateResponse({
                 message: SUCCESSFUL_LOGIN,
                 data: await this.generateToken(user),
-            }) as IResponse<{ token: string }>;
+            }) as IResponse<ITokenResponse>;
         else
             return new GenerateResponse({
                 status: HttpStatus.BAD_REQUEST,
