@@ -5,6 +5,7 @@ import { CreateCommentDTO } from '../../dto/createComment.dto';
 import { UpdateCommentDTO } from '../../dto/updateComment.dto';
 import { GenerateResponse } from '../../helpers/generateResponse';
 import { IResponse } from '../../interfaces/IResponse';
+import { ICommentsResponse } from '../../interfaces/ICommentsResponse';
 
 const COMMENTS_DONT_EXIST = 'Комментариев нет';
 const COMMENT_WAS_CREATED = 'Комментарий был опубликован';
@@ -23,7 +24,7 @@ export class CommentsService {
         if (comments)
             return new GenerateResponse({
                 data: { comments },
-            }) as IResponse<{ comments: Comment[] }>;
+            }) as IResponse<ICommentsResponse>;
         else
             return new GenerateResponse({
                 status: HttpStatus.NOT_FOUND,
@@ -37,7 +38,7 @@ export class CommentsService {
         if (comments)
             return new GenerateResponse({
                 data: { comments },
-            }) as IResponse<{ comments: Comment[] }>;
+            }) as IResponse<ICommentsResponse>;
         else
             return new GenerateResponse({
                 status: HttpStatus.NOT_FOUND,
