@@ -19,7 +19,7 @@ const COMMENT_WASNT_DELETED = 'Комментарий не был удален';
 export class CommentsService {
     constructor(@InjectModel(Comment) private commentsRepository: typeof Comment) {}
 
-    async getCommentsByLessonId(lessonId: number) {
+    async getCommentsByLessonId(lessonId: number): Promise<IResponse<ICommentsResponse | null>> {
         const comments = await this.commentsRepository.findAll({ where: { lessonId } });
         if (comments)
             return new GenerateResponse({
@@ -33,7 +33,7 @@ export class CommentsService {
             }) as IResponse<null>;
     }
 
-    async getCommentsByUserId(userId: number) {
+    async getCommentsByUserId(userId: number): Promise<IResponse<ICommentsResponse | null>> {
         const comments = await this.commentsRepository.findAll({ where: { userId } });
         if (comments)
             return new GenerateResponse({
@@ -47,7 +47,7 @@ export class CommentsService {
             }) as IResponse<null>;
     }
 
-    async createComment(dto: CreateCommentDTO) {
+    async createComment(dto: CreateCommentDTO): Promise<IResponse<null>> {
         const comment = await this.commentsRepository.create(dto);
         if (comment)
             return new GenerateResponse({
@@ -63,7 +63,7 @@ export class CommentsService {
             }) as IResponse<null>;
     }
 
-    async updateComment(dto: UpdateCommentDTO) {
+    async updateComment(dto: UpdateCommentDTO): Promise<IResponse<null>> {
         const comment = await this.commentsRepository.update(dto, { where: { id: dto.id } });
         if (comment)
             return new GenerateResponse({
@@ -79,7 +79,7 @@ export class CommentsService {
             }) as IResponse<null>;
     }
 
-    async deleteComment(id: number) {
+    async deleteComment(id: number): Promise<IResponse<null>> {
         const result = await this.commentsRepository.destroy({ where: { id } });
         if (result)
             return new GenerateResponse({
