@@ -7,8 +7,8 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { hash } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { GenerateResponse } from '../../helpers/generateResponse';
-import { IResponse } from '../../interfaces/IResponse';
-import { ITokenResponse } from '../../interfaces/ITokenResponse';
+import { IResponse } from '../../interfaces/Response/IResponse';
+import { ITokenResponse } from '../../interfaces/Response/ITokenResponse';
 
 const THIS_EMAIL_WAS_ALREADY_REGISTERED = 'Данная почта уже зарегистрирована';
 const SUCCESSFUL_REGISTRATION = 'Вы были зарегистрированны';
@@ -63,7 +63,7 @@ export class AuthService {
     async generateToken({ email, id, role }: User) {
         const payload: ITokenPayload = { email, id, role };
         return {
-            token: await this.jwtService.sign(payload),
+            token: this.jwtService.sign(payload),
         };
     }
 }

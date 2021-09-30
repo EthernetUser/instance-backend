@@ -10,7 +10,6 @@ export class VisitorsController {
     @UsePipes(ValidationPipe)
     @Post('/create')
     async createVisitor(@Body() dto: CreateVisitorDTO, @TokenDecorator() token: string) {
-        console.log(dto);
         return this.visitorsService.setVisitor(dto, token);
     }
 

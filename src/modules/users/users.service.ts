@@ -5,7 +5,9 @@ import { User } from '../../models/user.model';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { compare } from 'bcryptjs';
 import { GenerateResponse } from '../../helpers/generateResponse';
-import { IResponse } from '../../interfaces/IResponse';
+import { IResponse } from '../../interfaces/Response/IResponse';
+
+const USER_NOT_FOUND = 'Пользователь не найден';
 
 @Injectable()
 export class UsersService {
@@ -23,10 +25,9 @@ export class UsersService {
             }) as IResponse<{ user: User }>;
         else
             return new GenerateResponse({
-                status: HttpStatus.BAD_REQUEST,
+                status: HttpStatus.NOT_FOUND,
                 error: true,
-                //TODO make const from strings
-                message: 'Пользователь не найден',
+                message: USER_NOT_FOUND,
                 data: null,
             }) as IResponse<null>;
     }
@@ -39,9 +40,9 @@ export class UsersService {
             }) as IResponse<{ user: User }>;
         else
             return new GenerateResponse({
-                status: HttpStatus.BAD_REQUEST,
+                status: HttpStatus.NOT_FOUND,
                 error: true,
-                message: 'Пользователь не найден',
+                message: USER_NOT_FOUND,
                 data: null,
             }) as IResponse<null>;
     }

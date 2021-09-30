@@ -4,8 +4,8 @@ import { Comment } from '../../models/comment.model';
 import { CreateCommentDTO } from '../../dto/createComment.dto';
 import { UpdateCommentDTO } from '../../dto/updateComment.dto';
 import { GenerateResponse } from '../../helpers/generateResponse';
-import { IResponse } from '../../interfaces/IResponse';
-import { ICommentsResponse } from '../../interfaces/ICommentsResponse';
+import { IResponse } from '../../interfaces/Response/IResponse';
+import { ICommentsResponse } from '../../interfaces/Response/ICommentsResponse';
 
 const COMMENTS_DONT_EXIST = 'Комментариев нет';
 const COMMENT_WAS_CREATED = 'Комментарий был опубликован';
@@ -19,12 +19,12 @@ const COMMENT_WASNT_DELETED = 'Комментарий не был удален';
 export class CommentsService {
     constructor(@InjectModel(Comment) private commentsRepository: typeof Comment) {}
 
-    async getCommentsByLessonId(lessonId: number): Promise<IResponse<ICommentsResponse | null>> {
+    async getCommentsByLessonId(lessonId: number): Promise<IResponse<ICommentsResponse<Comment[]> | null>> {
         const comments = await this.commentsRepository.findAll({ where: { lessonId } });
         if (comments)
             return new GenerateResponse({
                 data: { comments },
-            }) as IResponse<ICommentsResponse>;
+            }) as IResponse<ICommentsResponse<Comment[]>>;
         else
             return new GenerateResponse({
                 status: HttpStatus.NOT_FOUND,
@@ -33,12 +33,12 @@ export class CommentsService {
             }) as IResponse<null>;
     }
 
-    async getCommentsByUserId(userId: number): Promise<IResponse<ICommentsResponse | null>> {
+    async getCommentsByUserId(userId: number): Promise<IResponse<ICommentsResponse<Comment[]> | null>> {
         const comments = await this.commentsRepository.findAll({ where: { userId } });
         if (comments)
             return new GenerateResponse({
                 data: { comments },
-            }) as IResponse<ICommentsResponse>;
+            }) as IResponse<ICommentsResponse<Comment[]>>;
         else
             return new GenerateResponse({
                 status: HttpStatus.NOT_FOUND,
