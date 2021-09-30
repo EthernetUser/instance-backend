@@ -1,3 +1,4 @@
+import { ILessonsResponse } from './../../interfaces/Response/ILessonsResponse';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/sequelize';
@@ -8,6 +9,7 @@ import { Visitor } from '../../models/visitor.model';
 import { LessonsService } from '../lessons/lessons.service';
 import { GenerateResponse } from '../../helpers/generateResponse';
 import { IVisitorsResponse } from '../../interfaces/Response/IVisitorsResponse';
+import { Lesson } from 'src/models/lesson.model';
 
 const VISITORS_NOT_FOUND = 'Не удалось найти участников занятия';
 const WRONG_TOKEN = 'Неверный токен';
@@ -37,13 +39,12 @@ export class VisitorsService {
             }) as IResponse<null>;
     }
 
-    async setVisitor(dto: CreateVisitorDTO, token: string) {
+    async setVisitor(dto: CreateVisitorDTO, token: string): Promise<IResponse<ILessonsResponse<Lesson>>> {
         if (!token) {
             return this.createVisitor(dto);
         }
-        const { lessonId } = dto;
 
-        const lesson = await this.lessonsService.getLessonById(lessonId);
+        const lesson: IResponse<ILessonsResponse<Lesson>> = await this.lessonsService.getLessonById(dto.lessonId);
         if (lesson.error) return lesson;
 
         const tokenPayload: ITokenPayload = await this.jwtService.verify(token);
@@ -55,12 +56,12 @@ export class VisitorsService {
                 data: null,
             }) as IResponse<null>;
 
-        const visitor = await this.visitorRepository.findOne({
+        const visitor: Visitor = await this.visitorRepository.findOne({
             where: { userId: +tokenPayload.id },
         });
 
         if (!visitor) return this.createVisitor(dto, tokenPayload.id);
-        await visitor.$set('lessons', lessonId);
+        await visitor.$set('lessons', dto.lessonId);
 
         if (visitor)
             return new GenerateResponse({
@@ -76,7 +77,7 @@ export class VisitorsService {
             }) as IResponse<null>;
     }
 
-    async createVisitor(dto: CreateVisitorDTO, id?: number) {
+    async createVisitor(dto: CreateVisitorDTO, id?: number): Promise<IResponse<null>> {
         const visitor = await this.visitorRepository.create({ ...dto, userId: id });
         await visitor.$set('lessons', dto.lessonId);
         if (visitor)
