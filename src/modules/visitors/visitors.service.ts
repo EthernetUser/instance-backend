@@ -6,10 +6,10 @@ import { ITokenPayload } from '../../interfaces/ITokenPayload';
 import { IResponse } from '../../interfaces/Response/IResponse';
 import { Visitor } from '../../models/visitor.model';
 import { LessonsService } from '../lessons/lessons.service';
-import { GenerateResponse } from './../../helpers/generateResponse';
-import { IVisitorsResponse } from './../../interfaces/Response/IVisitorsResponse';
+import { GenerateResponse } from '../../helpers/generateResponse';
+import { IVisitorsResponse } from '../../interfaces/Response/IVisitorsResponse';
 
-const VISITORD_NOT_FOUND = 'Не удалось найти участников занятия';
+const VISITORS_NOT_FOUND = 'Не удалось найти участников занятия';
 const WRONG_TOKEN = 'Неверный токен';
 const SUCCESSFUL_SET_VISITOR = 'Вы были записаны на занятие';
 const SERVER_ERROR = 'Ошибка сервера';
@@ -32,7 +32,7 @@ export class VisitorsService {
             return new GenerateResponse({
                 status: HttpStatus.NOT_FOUND,
                 error: true,
-                message: VISITORD_NOT_FOUND,
+                message: VISITORS_NOT_FOUND,
                 data: null,
             }) as IResponse<null>;
     }

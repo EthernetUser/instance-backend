@@ -3,9 +3,9 @@ import { InjectModel } from '@nestjs/sequelize';
 import { CreateLessonDTO } from '../../dto/createLesson.dto';
 import { UpdateLessonDTO } from '../../dto/updateLesson.dto';
 import { Lesson } from '../../models/lesson.model';
-import { IResponse } from './../../../dist/interfaces/IResponse.d';
-import { GenerateResponse } from './../../helpers/generateResponse';
-import { ILessonsResponse } from './../../interfaces/Response/ILessonsResponse';
+import { GenerateResponse } from '../../helpers/generateResponse';
+import { ILessonsResponse } from '../../interfaces/Response/ILessonsResponse';
+import { IResponse } from '../../interfaces/Response/IResponse';
 
 const SUCCESSFUL_CREATED = 'Занятие было создано';
 const UNSUCCESSFUL_CREATED = 'Занятие не было создано';
