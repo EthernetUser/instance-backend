@@ -1,3 +1,4 @@
+import { IUsersResponse } from './../../interfaces/Response/IUsersResponse';
 import { LoginDTO } from '../../dto/login.dto';
 import { RegistrationDTO } from '../../dto/registration.dto';
 import { InjectModel } from '@nestjs/sequelize';
@@ -17,12 +18,12 @@ export class UsersService {
         return await this.userRepository.create(dto);
     }
 
-    async getUserByEmail(email: string) {
+    async getUserByEmail(email: string): Promise<IResponse<IUsersResponse<User>>> {
         const user = await this.userRepository.findOne({ where: { email }, include: { all: true } });
         if (user)
             return new GenerateResponse({
                 data: { user },
-            }) as IResponse<{ user: User }>;
+            }) as IResponse<IUsersResponse<User>>;
         else
             return new GenerateResponse({
                 status: HttpStatus.NOT_FOUND,
@@ -32,12 +33,12 @@ export class UsersService {
             }) as IResponse<null>;
     }
 
-    async getUserById(id: number) {
+    async getUserById(id: number): Promise<IResponse<IUsersResponse<User>>> {
         const user = await this.userRepository.findByPk(id, { include: { all: true } });
         if (user)
             return new GenerateResponse({
                 data: { user },
-            }) as IResponse<{ user: User }>;
+            }) as IResponse<IUsersResponse<User>>;
         else
             return new GenerateResponse({
                 status: HttpStatus.NOT_FOUND,
