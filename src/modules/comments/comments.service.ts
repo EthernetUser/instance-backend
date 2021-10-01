@@ -21,7 +21,7 @@ export class CommentsService {
 
     async getCommentsByLessonId(lessonId: number): Promise<IResponse<ICommentsResponse<Comment[]> | null>> {
         const comments = await this.commentsRepository.findAll({ where: { lessonId } });
-        if (comments)
+        if (comments.length)
             return new GenerateResponse({
                 data: { comments },
             }) as IResponse<ICommentsResponse<Comment[]>>;
@@ -35,7 +35,7 @@ export class CommentsService {
 
     async getCommentsByUserId(userId: number): Promise<IResponse<ICommentsResponse<Comment[]> | null>> {
         const comments = await this.commentsRepository.findAll({ where: { userId } });
-        if (comments)
+        if (comments.length)
             return new GenerateResponse({
                 data: { comments },
             }) as IResponse<ICommentsResponse<Comment[]>>;
