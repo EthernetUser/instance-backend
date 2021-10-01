@@ -1,20 +1,22 @@
-import { ILessonsResponse } from './../../interfaces/Response/ILessonsResponse';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/sequelize';
+import { Lesson } from 'src/models/lesson.model';
 import { CreateVisitorDTO } from '../../dto/createVisitor.dto';
+import { GenerateResponse } from '../../helpers/generateResponse';
 import { ITokenPayload } from '../../interfaces/ITokenPayload';
 import { IResponse } from '../../interfaces/Response/IResponse';
+import { IVisitorsResponse } from '../../interfaces/Response/IVisitorsResponse';
 import { Visitor } from '../../models/visitor.model';
 import { LessonsService } from '../lessons/lessons.service';
-import { GenerateResponse } from '../../helpers/generateResponse';
-import { IVisitorsResponse } from '../../interfaces/Response/IVisitorsResponse';
-import { Lesson } from 'src/models/lesson.model';
+import { ILessonsResponse } from './../../interfaces/Response/ILessonsResponse';
 
 const VISITORS_NOT_FOUND = 'Не удалось найти участников занятия';
 const WRONG_TOKEN = 'Неверный токен';
 const SUCCESSFUL_SET_VISITOR = 'Вы были записаны на занятие';
 const SERVER_ERROR = 'Ошибка сервера';
+const SUCCESSFUL_DELETED = 'Вы больше не записаны на занятие';
+const UNSUCCESSFUL_DELETED = 'Ошибка сервера';
 
 @Injectable()
 export class VisitorsService {
@@ -25,8 +27,16 @@ export class VisitorsService {
     ) {}
 
     async getVisitorsByLessonId(id: number): Promise<IResponse<IVisitorsResponse<Visitor[]>>> {
-        const visitors = await this.visitorRepository.findAll({ where: { lessons: { id } }, include: { all: true } });
-        if (visitors)
+        const visitors = await this.visitorRepository.findAll({
+            include: {
+                model: Lesson,
+                where: {
+                    id,
+                },
+                attributes: ['id'],
+            },
+        });
+        if (visitors.length)
             return new GenerateResponse({
                 data: { visitors },
             }) as IResponse<IVisitorsResponse<Visitor[]>>;
@@ -58,10 +68,11 @@ export class VisitorsService {
 
         const visitor: Visitor = await this.visitorRepository.findOne({
             where: { userId: +tokenPayload.id },
+            include: { all: true },
         });
 
         if (!visitor) return this.createVisitor(dto, tokenPayload.id);
-        await visitor.$set('lessons', dto.lessonId);
+        await visitor.$add('lessons', [dto.lessonId]);
 
         if (visitor)
             return new GenerateResponse({
@@ -90,6 +101,29 @@ export class VisitorsService {
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
                 message: SERVER_ERROR,
+                data: null,
+            }) as IResponse<null>;
+    }
+
+    async deleteVisitor(lessonId: number, token: string) {
+        if (!token) return null;
+        const tokenPayload: ITokenPayload = await this.jwtService.verify(token);
+        if (!tokenPayload) return null;
+        const visitor = await this.visitorRepository.findOne({
+            where: { userId: +tokenPayload.id },
+        });
+        const result = await visitor.$remove('lessons', lessonId);
+
+        if (result > 0)
+            return new GenerateResponse({
+                message: SUCCESSFUL_DELETED,
+                data: null,
+            }) as IResponse<null>;
+        else
+            return new GenerateResponse({
+                status: HttpStatus.BAD_REQUEST,
+                error: true,
+                message: UNSUCCESSFUL_DELETED,
                 data: null,
             }) as IResponse<null>;
     }
