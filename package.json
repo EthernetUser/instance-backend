@@ -25,7 +25,7 @@
     "@nestjs/config": "^1.0.1",
     "@nestjs/core": "^7.6.15",
     "@nestjs/jwt": "^8.0.0",
-    "@nestjs/platform-express": "^7.6.15",
+    "@nestjs/platform-express": "^7.6.18",
     "@nestjs/sequelize": "^0.2.0",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.4.0",
