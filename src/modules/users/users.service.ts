@@ -55,8 +55,9 @@ export class UsersService {
 
     async validateUser(dto: LoginDTO): Promise<User | null> {
         const user = await this.userRepository.findOne({ where: { email: dto.email } });
+        if (!user) return null;
         const passwordEquals = await compare(dto.password, user.password);
-        if (user && passwordEquals) return user;
+        if (passwordEquals) return user;
         else return null;
     }
 }

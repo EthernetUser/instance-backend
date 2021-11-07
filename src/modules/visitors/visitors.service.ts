@@ -106,9 +106,21 @@ export class VisitorsService {
     }
 
     async deleteVisitor(lessonId: number, token: string) {
-        if (!token) return null;
+        if (!token)
+            return new GenerateResponse({
+                status: HttpStatus.UNAUTHORIZED,
+                error: true,
+                message: WRONG_TOKEN,
+                data: null,
+            }) as IResponse<null>;
         const tokenPayload: ITokenPayload = await this.jwtService.verify(token);
-        if (!tokenPayload) return null;
+        if (!tokenPayload)
+            return new GenerateResponse({
+                status: HttpStatus.UNAUTHORIZED,
+                error: true,
+                message: WRONG_TOKEN,
+                data: null,
+            });
         const visitor = await this.visitorRepository.findOne({
             where: { userId: +tokenPayload.id },
         });
