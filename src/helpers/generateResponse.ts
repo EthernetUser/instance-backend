@@ -8,7 +8,7 @@ export class GenerateResponse {
     constructor({
         status = HttpStatus.OK,
         error = false,
-        message,
+        message = null,
         data,
     }: {
         status?: number;

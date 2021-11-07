@@ -14,6 +14,24 @@ export class LessonsController {
         res.status(result.status).send(result);
     }
 
+    @Get('/')
+    async getAllLesson(@Res() res: Response) {
+        const result = await this.lessonsService.getAllLessons();
+        res.status(result.status).send(result);
+    }
+
+    @Get('/page/:page')
+    async getLessonFromPage(@Param('page') page: number, @Res() res: Response) {
+        const result = await this.lessonsService.getLessonsFromPage(page);
+        res.status(result.status).send(result);
+    }
+
+    @Get('/limit/:limit')
+    async getLessonLastLimited(@Param('limit') limit: number, @Res() res: Response) {
+        const result = await this.lessonsService.getLessonsLastLimited(Number(limit));
+        res.status(result.status).send(result);
+    }
+
     @Post('/create')
     async createLesson(@Body() dto: CreateLessonDTO, @Res() res: Response) {
         const result = await this.lessonsService.createLesson(dto);

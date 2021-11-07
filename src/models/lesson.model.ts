@@ -27,7 +27,7 @@ export class Lesson extends Model<Lesson, LessonCreationAttrs> {
     @Column({ type: DataType.STRING, allowNull: false })
     description: string;
 
-    @Column({ type: DataType.STRING, allowNull: false, defaultValue: RolesEnum.Student })
+    @Column({ type: DataType.DATE, allowNull: false })
     date: Date;
 
     @Column({ type: DataType.STRING, allowNull: false })
