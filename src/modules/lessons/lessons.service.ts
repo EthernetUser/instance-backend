@@ -34,6 +34,53 @@ export class LessonsService {
             }) as IResponse<null>;
     }
 
+    async getAllLessons(): Promise<IResponse<ILessonsResponse<Lesson[]>>> {
+        const lessons = await this.lessonRepository.findAll();
+        if (lessons.length)
+            return new GenerateResponse({
+                data: { lessons },
+            }) as IResponse<ILessonsResponse<Lesson[]>>;
+        else
+            return new GenerateResponse({
+                status: HttpStatus.NOT_FOUND,
+                error: true,
+                message: LESSON_NOT_FOUND,
+                data: null,
+            }) as IResponse<null>;
+    }
+
+    async getLessonsFromPage(page: number): Promise<IResponse<ILessonsResponse<{ rows: Lesson[]; count: number }>>> {
+        const limit = Number(process.env.LESSON_PAGE_LIMIT);
+        const offset = limit * page;
+        const lessons = await this.lessonRepository.findAndCountAll({ limit, offset, order: [['id', 'DESC']] });
+        if (lessons.rows.length)
+            return new GenerateResponse({
+                data: { ...lessons },
+            }) as IResponse<ILessonsResponse<{ rows: Lesson[]; count: number }>>;
+        else
+            return new GenerateResponse({
+                status: HttpStatus.NOT_FOUND,
+                error: true,
+                message: LESSON_NOT_FOUND,
+                data: null,
+            }) as IResponse<null>;
+    }
+
+    async getLessonsLastLimited(limit: number): Promise<IResponse<ILessonsResponse<Lesson[]>>> {
+        const lessons = await this.lessonRepository.findAll({ limit, order: [['id', 'DESC']] });
+        if (lessons.length)
+            return new GenerateResponse({
+                data: { lessons },
+            }) as IResponse<ILessonsResponse<Lesson[]>>;
+        else
+            return new GenerateResponse({
+                status: HttpStatus.NOT_FOUND,
+                error: true,
+                message: LESSON_NOT_FOUND,
+                data: null,
+            }) as IResponse<null>;
+    }
+
     async createLesson(dto: CreateLessonDTO): Promise<IResponse<null>> {
         const lesson = this.lessonRepository.create(dto);
         if (lesson)
