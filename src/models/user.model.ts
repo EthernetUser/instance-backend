@@ -1,8 +1,9 @@
-import { Comment } from './comment.model';
-import { Visitor } from './visitor.model';
-import { weaponProficiencyLevel } from '../enums/weaponProfLevel.enum';
+import { BelongsToMany, Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
 import { RolesEnum } from '../enums/roles.enum';
-import { Column, DataType, HasMany, HasOne, Model, Table } from 'sequelize-typescript';
+import { weaponProficiencyLevel } from '../enums/weaponProfLevel.enum';
+import { Comment } from './comment.model';
+import { Event } from './event.model';
+import { UserEvent } from './user-event.model';
 
 interface UserCreationAttrs {
     nickName: string;
@@ -51,8 +52,14 @@ export class User extends Model<User, UserCreationAttrs> {
     @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
     verified: boolean;
 
-    @HasOne(() => Visitor)
-    userVisitor: Visitor;
+    @Column({ type: DataType.STRING, allowNull: true, unique: true })
+    verificationPath: string;
+
+    // @HasOne(() => Visitor)
+    // userVisitor: Visitor;
+
+    @BelongsToMany(() => Event, () => UserEvent)
+    followedEvents: Event[];
 
     @HasMany(() => Comment)
     userComments: Comment[];

@@ -1,7 +1,8 @@
-import { VisitorEvent } from './visitor-event.model';
-import { Visitor } from './visitor.model';
+import { BelongsTo, BelongsToMany, Column, DataType, ForeignKey, HasMany, Model, Table } from 'sequelize-typescript';
 import { Comment } from './comment.model';
-import { BelongsToMany, Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import { Organization } from './organization.model';
+import { UserEvent } from './user-event.model';
+import { User } from './user.model';
 
 interface EventCreationAttrs {
     title: string;
@@ -35,6 +36,16 @@ export class Event extends Model<Event, EventCreationAttrs> {
     @HasMany(() => Comment)
     eventComments: Comment[];
 
-    @BelongsToMany(() => Visitor, () => VisitorEvent)
-    visitors: Visitor[];
+    // @BelongsToMany(() => Visitor, () => VisitorEvent)
+    // visitors: Visitor[];
+
+    @BelongsToMany(() => User, () => UserEvent)
+    followingUsers: User[];
+
+    @BelongsTo(() => Organization, 'organizationId')
+    organization: Organization;
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.INTEGER })
+    organizationId: number;
 }

@@ -4,13 +4,12 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Comment } from '../../models/comment.model';
 import { Event } from '../../models/event.model';
 import { User } from '../../models/user.model';
-import { VisitorEvent } from '../../models/visitor-event.model';
-import { Visitor } from '../../models/visitor.model';
 import { AuthModule } from '../auth/auth.module';
 import { EventsModule } from '../events/events.module';
 import { UsersModule } from '../users/users.module';
-import { VisitorsModule } from '../visitors/visitors.module';
 import { CommentsModule } from '../comments/comments.module';
+import { Organization } from 'src/models/organization.model';
+import { UserEvent } from 'src/models/user-event.model';
 
 @Module({
     imports: [
@@ -25,14 +24,13 @@ import { CommentsModule } from '../comments/comments.module';
             password: `${process.env.DB_PASSWORD}`,
             database: process.env.DB_NAME,
             autoLoadModels: true,
-            models: [Event, User, Visitor, Comment, VisitorEvent],
+            models: [Event, User, Comment, Organization, UserEvent],
             logging: false,
             synchronize: true,
         }),
         UsersModule,
         EventsModule,
         AuthModule,
-        VisitorsModule,
         CommentsModule,
     ],
     providers: [],

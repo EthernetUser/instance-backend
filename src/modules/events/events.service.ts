@@ -2,10 +2,10 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { CreateEventDTO } from '../../dto/createEvent.dto';
 import { UpdateEventDTO } from '../../dto/updateEvent.dto';
-import { Event } from '../../models/event.model';
 import { GenerateResponse } from '../../helpers/generateResponse';
 import { IEventsResponse } from '../../interfaces/Response/IEventsResponse';
 import { IResponse } from '../../interfaces/Response/IResponse';
+import { Event } from '../../models/event.model';
 
 const SUCCESSFUL_CREATED = 'Занятие было создано';
 const UNSUCCESSFUL_CREATED = 'Занятие не было создано';
