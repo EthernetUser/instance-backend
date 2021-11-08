@@ -55,9 +55,6 @@ export class User extends Model<User, UserCreationAttrs> {
     @Column({ type: DataType.STRING, allowNull: true, unique: true })
     verificationPath: string;
 
-    // @HasOne(() => Visitor)
-    // userVisitor: Visitor;
-
     @BelongsToMany(() => Event, () => UserEvent)
     followedEvents: Event[];
 

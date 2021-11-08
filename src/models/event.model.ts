@@ -36,9 +36,6 @@ export class Event extends Model<Event, EventCreationAttrs> {
     @HasMany(() => Comment)
     eventComments: Comment[];
 
-    // @BelongsToMany(() => Visitor, () => VisitorEvent)
-    // visitors: Visitor[];
-
     @BelongsToMany(() => User, () => UserEvent)
     followingUsers: User[];
 
