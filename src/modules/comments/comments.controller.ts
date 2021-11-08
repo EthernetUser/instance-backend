@@ -10,9 +10,9 @@ import { Comment } from 'src/models/comment.model';
 export class CommentsController {
     constructor(private commentsService: CommentsService) {}
 
-    @Get('/lesson/:id')
-    async getCommentsByLessonId(@Param('id') id: string): Promise<IResponse<ICommentsResponse<Comment[]>>> {
-        return await this.commentsService.getCommentsByLessonId(Number(id));
+    @Get('/event/:id')
+    async getCommentsByEventId(@Param('id') id: string): Promise<IResponse<ICommentsResponse<Comment[]>>> {
+        return await this.commentsService.getCommentsByEventId(Number(id));
     }
 
     @Get('/user/:id')

@@ -1,4 +1,4 @@
-import { LessonsModule } from '../lessons/lessons.module';
+import { EventsModule } from '../events/events.module';
 import { forwardRef, Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Visitor } from '../../models/visitor.model';
@@ -8,7 +8,7 @@ import { VisitorsService } from './visitors.service';
 
 @Module({
     controllers: [VisitorsController],
-    providers: [AuthModule, VisitorsService, LessonsModule],
-    imports: [forwardRef(() => AuthModule), forwardRef(() => LessonsModule), SequelizeModule.forFeature([Visitor])],
+    providers: [AuthModule, VisitorsService, EventsModule],
+    imports: [forwardRef(() => AuthModule), forwardRef(() => EventsModule), SequelizeModule.forFeature([Visitor])],
 })
 export class VisitorsModule {}

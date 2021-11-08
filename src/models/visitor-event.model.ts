@@ -1,9 +1,9 @@
 import { Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
-import { Lesson } from './lesson.model';
+import { Event } from './event.model';
 import { Visitor } from './visitor.model';
 
-@Table({ tableName: 'visitor_lesson', createdAt: false, updatedAt: false })
-export class VisitorLesson extends Model<VisitorLesson> {
+@Table({ tableName: 'visitor_event', createdAt: false, updatedAt: false })
+export class VisitorEvent extends Model<VisitorEvent> {
     @Column({
         type: DataType.INTEGER,
         unique: true,
@@ -16,7 +16,7 @@ export class VisitorLesson extends Model<VisitorLesson> {
     @Column({ type: DataType.INTEGER })
     visitorId: number;
 
-    @ForeignKey(() => Lesson)
+    @ForeignKey(() => Event)
     @Column({ type: DataType.INTEGER })
-    lessonId: number;
+    eventId: number;
 }

@@ -17,16 +17,16 @@ export class VisitorsController {
     }
 
     @UsePipes(ValidationPipe)
-    @Get('/lesson/:id')
-    async getVisitorsByLessonId(@Param('id') id: string, @Res() res: Response) {
-        const result = await this.visitorsService.getVisitorsByLessonId(Number(id));
+    @Get('/event/:id')
+    async getVisitorsByEventId(@Param('id') id: string, @Res() res: Response) {
+        const result = await this.visitorsService.getVisitorsByEventId(Number(id));
         res.status(result.status).send(result);
     }
 
     @UsePipes(ValidationPipe)
     @Delete('/delete')
-    async deleteVisitor(@Body() { lessonId }: DeleteVisitorDTO, @TokenDecorator() token: string, @Res() res: Response) {
-        const result = await this.visitorsService.deleteVisitor(lessonId, token);
+    async deleteVisitor(@Body() { eventId }: DeleteVisitorDTO, @TokenDecorator() token: string, @Res() res: Response) {
+        const result = await this.visitorsService.deleteVisitor(eventId, token);
         res.status(result.status).send(result);
     }
 }

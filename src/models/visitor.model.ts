@@ -1,6 +1,6 @@
-import { VisitorLesson } from './visitor-lesson.model';
+import { VisitorEvent } from './visitor-event.model';
 import { BelongsTo, BelongsToMany, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
-import { Lesson } from './lesson.model';
+import { Event } from './event.model';
 import { User } from './user.model';
 
 interface VisitorCreationAttrs {
@@ -29,8 +29,8 @@ export class Visitor extends Model<Visitor, VisitorCreationAttrs> {
     @BelongsTo(() => User, 'userId')
     user: User;
 
-    @BelongsToMany(() => Lesson, () => VisitorLesson)
-    lessons: Lesson[];
+    @BelongsToMany(() => Event, () => VisitorEvent)
+    events: Event[];
 
     @Column({ type: DataType.STRING, unique: false, allowNull: true })
     nickName: string;

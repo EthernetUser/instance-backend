@@ -1,15 +1,15 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/sequelize';
-import { Lesson } from 'src/models/lesson.model';
+import { Event } from 'src/models/event.model';
 import { CreateVisitorDTO } from '../../dto/createVisitor.dto';
 import { GenerateResponse } from '../../helpers/generateResponse';
 import { ITokenPayload } from '../../interfaces/ITokenPayload';
 import { IResponse } from '../../interfaces/Response/IResponse';
 import { IVisitorsResponse } from '../../interfaces/Response/IVisitorsResponse';
 import { Visitor } from '../../models/visitor.model';
-import { LessonsService } from '../lessons/lessons.service';
-import { ILessonsResponse } from './../../interfaces/Response/ILessonsResponse';
+import { EventsService } from '../events/events.service';
+import { IEventsResponse } from '../../interfaces/Response/IEventsResponse';
 
 const VISITORS_NOT_FOUND = 'Не удалось найти участников занятия';
 const WRONG_TOKEN = 'Неверный токен';
@@ -23,13 +23,13 @@ export class VisitorsService {
     constructor(
         @InjectModel(Visitor) private visitorRepository: typeof Visitor,
         private jwtService: JwtService,
-        private lessonsService: LessonsService,
+        private eventsService: EventsService,
     ) {}
 
-    async getVisitorsByLessonId(id: number): Promise<IResponse<IVisitorsResponse<Visitor[]>>> {
+    async getVisitorsByEventId(id: number): Promise<IResponse<IVisitorsResponse<Visitor[]>>> {
         const visitors = await this.visitorRepository.findAll({
             include: {
-                model: Lesson,
+                model: Event,
                 where: {
                     id,
                 },
@@ -49,13 +49,13 @@ export class VisitorsService {
             }) as IResponse<null>;
     }
 
-    async setVisitor(dto: CreateVisitorDTO, token: string): Promise<IResponse<ILessonsResponse<Lesson>>> {
+    async setVisitor(dto: CreateVisitorDTO, token: string): Promise<IResponse<IEventsResponse<Event>>> {
         if (!token) {
             return this.createVisitor(dto);
         }
 
-        const lesson: IResponse<ILessonsResponse<Lesson>> = await this.lessonsService.getLessonById(dto.lessonId);
-        if (lesson.error) return lesson;
+        const event: IResponse<IEventsResponse<Event>> = await this.eventsService.getEventById(dto.eventId);
+        if (event.error) return event;
 
         const tokenPayload: ITokenPayload = await this.jwtService.verify(token);
         if (!tokenPayload)
@@ -72,7 +72,7 @@ export class VisitorsService {
         });
 
         if (!visitor) return this.createVisitor(dto, tokenPayload.id);
-        await visitor.$add('lessons', [dto.lessonId]);
+        await visitor.$add('events', [dto.eventId]);
 
         if (visitor)
             return new GenerateResponse({
@@ -90,7 +90,7 @@ export class VisitorsService {
 
     async createVisitor(dto: CreateVisitorDTO, id?: number): Promise<IResponse<null>> {
         const visitor = await this.visitorRepository.create({ ...dto, userId: id });
-        await visitor.$set('lessons', dto.lessonId);
+        await visitor.$set('events', dto.eventId);
         if (visitor)
             return new GenerateResponse({
                 message: SUCCESSFUL_SET_VISITOR,
@@ -105,7 +105,7 @@ export class VisitorsService {
             }) as IResponse<null>;
     }
 
-    async deleteVisitor(lessonId: number, token: string) {
+    async deleteVisitor(eventId: number, token: string) {
         if (!token)
             return new GenerateResponse({
                 status: HttpStatus.UNAUTHORIZED,
@@ -124,7 +124,7 @@ export class VisitorsService {
         const visitor = await this.visitorRepository.findOne({
             where: { userId: +tokenPayload.id },
         });
-        const result = await visitor.$remove('lessons', lessonId);
+        const result = await visitor.$remove('events', eventId);
 
         if (result > 0)
             return new GenerateResponse({

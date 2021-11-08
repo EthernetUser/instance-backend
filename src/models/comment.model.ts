@@ -1,4 +1,4 @@
-import { Lesson } from './lesson.model';
+import { Event } from './event.model';
 import { User } from './user.model';
 import { Column, DataType, Model, Table, BelongsTo, ForeignKey } from 'sequelize-typescript';
 
@@ -6,7 +6,7 @@ interface CommentCreationAttrs {
     text: string;
     private: boolean;
     userId: number;
-    lessonId: number;
+    eventId: number;
 }
 
 @Table({ tableName: 'comment' })
@@ -32,10 +32,10 @@ export class Comment extends Model<Comment, CommentCreationAttrs> {
     @Column({ type: DataType.INTEGER })
     userId: number;
 
-    @BelongsTo(() => Lesson, 'lessonId')
-    lesson: Lesson;
+    @BelongsTo(() => Event, 'eventId')
+    event: Event;
 
-    @ForeignKey(() => Lesson)
+    @ForeignKey(() => Event)
     @Column({ type: DataType.INTEGER })
-    lessonId: number;
+    eventId: number;
 }

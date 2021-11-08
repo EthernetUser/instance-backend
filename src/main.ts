@@ -10,12 +10,10 @@ const start = async () => {
         await app.init();
 
         app.useGlobalPipes(new ValidationPipe());
-        // const whitelist = ['http://localhost:3000'];
         app.enableCors({
             origin: ['http://localhost:3000'],
             methods: ['GET', 'POST', 'PUT', 'DELETE'],
         });
-        // app.enableCors();
 
         await app.listen(PORT, () => console.log(`Server started on PORT ${PORT}`));
     } catch (error) {

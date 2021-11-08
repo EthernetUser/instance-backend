@@ -19,8 +19,8 @@ const COMMENT_WASNT_DELETED = 'Комментарий не был удален';
 export class CommentsService {
     constructor(@InjectModel(Comment) private commentsRepository: typeof Comment) {}
 
-    async getCommentsByLessonId(lessonId: number): Promise<IResponse<ICommentsResponse<Comment[]> | null>> {
-        const comments = await this.commentsRepository.findAll({ where: { lessonId } });
+    async getCommentsByEventId(eventId: number): Promise<IResponse<ICommentsResponse<Comment[]> | null>> {
+        const comments = await this.commentsRepository.findAll({ where: { eventId } });
         if (comments.length)
             return new GenerateResponse({
                 data: { comments },

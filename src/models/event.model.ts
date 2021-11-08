@@ -1,18 +1,17 @@
-import { VisitorLesson } from './visitor-lesson.model';
+import { VisitorEvent } from './visitor-event.model';
 import { Visitor } from './visitor.model';
 import { Comment } from './comment.model';
-import { RolesEnum } from '../enums/roles.enum';
 import { BelongsToMany, Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
 
-interface LessonCreationAttrs {
+interface EventCreationAttrs {
     title: string;
     description: string;
     date: Date;
     location: string;
 }
 
-@Table({ tableName: 'lesson' })
-export class Lesson extends Model<Lesson, LessonCreationAttrs> {
+@Table({ tableName: 'events' })
+export class Event extends Model<Event, EventCreationAttrs> {
     @Column({
         type: DataType.INTEGER,
         unique: true,
@@ -34,8 +33,8 @@ export class Lesson extends Model<Lesson, LessonCreationAttrs> {
     location: string;
 
     @HasMany(() => Comment)
-    lessonComments: Comment[];
+    eventComments: Comment[];
 
-    @BelongsToMany(() => Visitor, () => VisitorLesson)
+    @BelongsToMany(() => Visitor, () => VisitorEvent)
     visitors: Visitor[];
 }
