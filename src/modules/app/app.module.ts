@@ -10,11 +10,9 @@ import { AuthModule } from '../auth/auth.module';
 import { EventsModule } from '../events/events.module';
 import { UsersModule } from '../users/users.module';
 import { VisitorsModule } from '../visitors/visitors.module';
-import { AppController } from './app.controller';
 import { CommentsModule } from '../comments/comments.module';
 
 @Module({
-    controllers: [AppController],
     imports: [
         ConfigModule.forRoot({
             envFilePath: `.${process.env.NODE_ENV}.env`,
