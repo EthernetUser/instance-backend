@@ -82,7 +82,7 @@ export class EventsService {
     }
 
     async createEvent(dto: CreateEventDTO): Promise<IResponse<null>> {
-        const event = this.eventRepository.create(dto);
+        const event = await this.eventRepository.create(dto);
         if (event)
             return new GenerateResponse({
                 message: SUCCESSFUL_CREATED,
