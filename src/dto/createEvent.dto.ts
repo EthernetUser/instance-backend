@@ -16,4 +16,8 @@ export class CreateEventDTO {
     @IsNotEmpty()
     @IsString()
     location: string;
+
+    @IsNotEmpty()
+    @IsString()
+    type: string;
 }
