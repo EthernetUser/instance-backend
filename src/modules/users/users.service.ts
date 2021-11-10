@@ -1,18 +1,23 @@
-import { ITokenPayload } from './../../interfaces/ITokenPayload';
-import { EventsService } from './../events/events.service';
-import { IUsersResponse } from './../../interfaces/Response/IUsersResponse';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { InjectModel } from '@nestjs/sequelize';
+import { compare } from 'bcryptjs';
 import { LoginDTO } from '../../dto/login.dto';
 import { RegistrationDTO } from '../../dto/registration.dto';
-import { InjectModel } from '@nestjs/sequelize';
-import { User } from '../../models/user.model';
-import { Delete, HttpStatus, Injectable } from '@nestjs/common';
-import { compare } from 'bcryptjs';
 import { GenerateResponse } from '../../helpers/generateResponse';
 import { IResponse } from '../../interfaces/Response/IResponse';
-import { JwtService } from '@nestjs/jwt';
+import { User } from '../../models/user.model';
+import { ITokenPayload } from './../../interfaces/ITokenPayload';
+import { IUsersResponse } from './../../interfaces/Response/IUsersResponse';
+import { EventsService } from './../events/events.service';
 
 const USER_NOT_FOUND = 'Пользователь не найден';
 const WRONG_TOKEN = 'Неверный токен';
+const SERVER_ERROR = 'Ошибка сервера';
+const SUCCESSFUL_FOLLOW = 'Вы были записаны на мероприятие';
+const ALREADY_FOLLOW = 'Вы уже записанны за мероприятие';
+const SUCCESSFUL_UNFOLLOW = 'Вы больше не записанны на мероприятие';
+const WRONG_DATA = 'Неверные данные';
 
 @Injectable()
 export class UsersService {
@@ -99,13 +104,13 @@ export class UsersService {
             if (countEvents <= 0) {
                 await user.$set('followedEvents', [eventId]);
                 return new GenerateResponse({
-                    message: 'Вы были записаны на мероприятие',
+                    message: SUCCESSFUL_FOLLOW,
                     data: null,
                 }) as IResponse<null>;
             } else {
                 await user.$add('followedEvents', eventId);
                 return new GenerateResponse({
-                    message: 'Вы были записаны на мероприятие',
+                    message: SUCCESSFUL_FOLLOW,
                     data: null,
                 }) as IResponse<null>;
             }
@@ -113,13 +118,12 @@ export class UsersService {
             return new GenerateResponse({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
-                message: 'Вы уже записанны за мероприятие',
+                message: ALREADY_FOLLOW,
                 data: null,
             }) as IResponse<null>;
         }
     }
 
-    @Delete('/delete')
     async unfollowEvent(eventId: number, token: string) {
         if (!token) {
             return new GenerateResponse({
@@ -149,14 +153,14 @@ export class UsersService {
             const count = await user.$remove('followedEvents', eventId);
             if (count > 0) {
                 return new GenerateResponse({
-                    message: 'Вы больше не записанны на мероприятие',
+                    message: SUCCESSFUL_UNFOLLOW,
                     data: null,
                 }) as IResponse<null>;
             } else {
                 return new GenerateResponse({
                     status: HttpStatus.INTERNAL_SERVER_ERROR,
                     error: true,
-                    message: 'Ошибка сервера',
+                    message: SERVER_ERROR,
                     data: null,
                 }) as IResponse<null>;
             }
@@ -164,7 +168,7 @@ export class UsersService {
             return new GenerateResponse({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
-                message: 'Неверные данные',
+                message: WRONG_DATA,
                 data: null,
             }) as IResponse<null>;
         }
