@@ -9,6 +9,7 @@ interface EventCreationAttrs {
     description: string;
     date: Date;
     location: string;
+    type: string;
 }
 
 @Table({ tableName: 'events' })
@@ -21,7 +22,7 @@ export class Event extends Model<Event, EventCreationAttrs> {
     })
     id: number;
 
-    @Column({ type: DataType.STRING, unique: true, allowNull: false })
+    @Column({ type: DataType.STRING, unique: false, allowNull: false })
     title: string;
 
     @Column({ type: DataType.STRING, allowNull: false })
@@ -32,6 +33,9 @@ export class Event extends Model<Event, EventCreationAttrs> {
 
     @Column({ type: DataType.STRING, allowNull: false })
     location: string;
+
+    @Column({ type: DataType.STRING, allowNull: false })
+    type: string;
 
     @HasMany(() => Comment)
     eventComments: Comment[];
