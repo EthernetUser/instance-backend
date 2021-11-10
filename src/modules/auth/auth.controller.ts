@@ -15,7 +15,14 @@ export class AuthController {
     }
 
     @Post('/registration')
-    async registration(@Body() dto: RegistrationDTO, @Res() res: Response) {
+    async user_registration(@Body() dto: RegistrationDTO, @Res() res: Response) {
+        const result = await this.authService.registration(dto);
+        res.status(result.status).send(result);
+    }
+
+    //TODO organization registration api
+    @Post('/org_registration')
+    async org_registration(@Body() dto: RegistrationDTO, @Res() res: Response) {
         const result = await this.authService.registration(dto);
         res.status(result.status).send(result);
     }
