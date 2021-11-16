@@ -6,6 +6,7 @@ interface OrganizationCreationAttrs {
     email: string;
     password: string;
     description: string;
+    category: string;
 }
 
 @Table({ tableName: 'organization' })
@@ -29,6 +30,15 @@ export class Organization extends Model<Organization, OrganizationCreationAttrs>
 
     @Column({ type: DataType.STRING, allowNull: false })
     description: string;
+
+    @Column({ type: DataType.STRING, allowNull: false })
+    category: string;
+
+    @Column({ type: DataType.STRING, allowNull: true })
+    phone: string;
+
+    @Column({ type: DataType.STRING, allowNull: true })
+    links: string;
 
     @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
     verified: boolean;

@@ -11,9 +11,5 @@ export class CreateCommentDTO {
 
     @IsNotEmpty()
     @IsNumber()
-    userId: number;
-
-    @IsNotEmpty()
-    @IsNumber()
     eventId: number;
 }
