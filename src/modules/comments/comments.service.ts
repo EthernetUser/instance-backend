@@ -1,3 +1,4 @@
+import { ITokenPayload } from 'src/interfaces/ITokenPayload';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Comment } from '../../models/comment.model';
@@ -47,8 +48,8 @@ export class CommentsService {
             }) as IResponse<null>;
     }
 
-    async createComment(dto: CreateCommentDTO): Promise<IResponse<null>> {
-        const comment = await this.commentsRepository.create(dto);
+    async createComment(dto: CreateCommentDTO, entity: ITokenPayload): Promise<IResponse<null>> {
+        const comment = await this.commentsRepository.create({ ...dto, userId: entity.id });
         if (comment)
             return new GenerateResponse({
                 message: COMMENT_WAS_CREATED,
@@ -63,8 +64,8 @@ export class CommentsService {
             }) as IResponse<null>;
     }
 
-    async updateComment(dto: UpdateCommentDTO): Promise<IResponse<null>> {
-        const comment = await this.commentsRepository.update(dto, { where: { id: dto.id } });
+    async updateComment(dto: UpdateCommentDTO, entity: ITokenPayload): Promise<IResponse<null>> {
+        const comment = await this.commentsRepository.update(dto, { where: { id: dto.id, userId: entity.id } });
         if (comment)
             return new GenerateResponse({
                 message: COMMENT_WAS_UPDATED,
@@ -79,8 +80,8 @@ export class CommentsService {
             }) as IResponse<null>;
     }
 
-    async deleteComment(id: number): Promise<IResponse<null>> {
-        const result = await this.commentsRepository.destroy({ where: { id } });
+    async deleteComment(id: number, entity: ITokenPayload): Promise<IResponse<null>> {
+        const result = await this.commentsRepository.destroy({ where: { id, userId: entity.id } });
         if (result)
             return new GenerateResponse({
                 message: COMMENT_WAS_DELETED,

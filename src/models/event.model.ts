@@ -10,6 +10,7 @@ interface EventCreationAttrs {
     date: Date;
     location: string;
     type: string;
+    organizationId: number;
 }
 
 @Table({ tableName: 'events' })
@@ -47,6 +48,6 @@ export class Event extends Model<Event, EventCreationAttrs> {
     organization: Organization;
 
     @ForeignKey(() => Organization)
-    @Column({ type: DataType.INTEGER })
+    @Column({ type: DataType.INTEGER, allowNull: false })
     organizationId: number;
 }

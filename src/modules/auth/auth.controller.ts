@@ -1,7 +1,8 @@
 import { Body, Controller, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
+import { OrgRegistrationDTO } from 'src/dto/orgRegistration.dto';
 import { LoginDTO } from '../../dto/login.dto';
-import { RegistrationDTO } from '../../dto/registration.dto';
+import { UserRegistrationDTO } from '../../dto/userRegistration.dto';
 import { AuthService } from './auth.service';
 
 @Controller('/api/auth')
@@ -11,19 +12,24 @@ export class AuthController {
     @Post('/login')
     async login(@Body() dto: LoginDTO, @Res() res: Response) {
         const result = await this.authService.login(dto);
-        res.status(result.status).send(result);
+        return res.status(result.status).send(result);
+    }
+
+    @Post('/org_login')
+    async orgLogin(@Body() dto: LoginDTO, @Res() res: Response) {
+        const result = await this.authService.organizationLogin(dto);
+        return res.status(result.status).send(result);
     }
 
     @Post('/registration')
-    async user_registration(@Body() dto: RegistrationDTO, @Res() res: Response) {
-        const result = await this.authService.registration(dto);
-        res.status(result.status).send(result);
+    async userRegistration(@Body() dto: UserRegistrationDTO, @Res() res: Response) {
+        const result = await this.authService.userRegistration(dto);
+        return res.status(result.status).send(result);
     }
 
-    //TODO organization registration api
     @Post('/org_registration')
-    async org_registration(@Body() dto: RegistrationDTO, @Res() res: Response) {
-        const result = await this.authService.registration(dto);
-        res.status(result.status).send(result);
+    async orgRegistration(@Body() dto: OrgRegistrationDTO, @Res() res: Response) {
+        const result = await this.authService.organizationRegistration(dto);
+        return res.status(result.status).send(result);
     }
 }

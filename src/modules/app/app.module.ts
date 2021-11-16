@@ -10,6 +10,7 @@ import { UsersModule } from '../users/users.module';
 import { CommentsModule } from '../comments/comments.module';
 import { Organization } from 'src/models/organization.model';
 import { UserEvent } from 'src/models/user-event.model';
+import { OrganizationsModule } from '../organizations/organizations.module';
 
 @Module({
     imports: [
@@ -32,6 +33,7 @@ import { UserEvent } from 'src/models/user-event.model';
         EventsModule,
         AuthModule,
         CommentsModule,
+        OrganizationsModule,
     ],
     providers: [],
 })
