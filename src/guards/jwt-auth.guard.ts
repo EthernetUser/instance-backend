@@ -1,22 +1,29 @@
-import { ITokenPayload } from '../interfaces/ITokenPayload';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { TYPES_KEY } from 'src/decorators/jwt-type.decorator';
+import { ITokenPayload } from '../interfaces/ITokenPayload';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-    constructor(private jwtService: JwtService) {}
+    constructor(private jwtService: JwtService, private reflector: Reflector) {}
 
     async canActivate(context: ExecutionContext) {
-        const req = context.switchToHttp().getRequest();
-        const authHeader = req.header.authorization;
+        const requiredTypes = this.reflector.getAllAndOverride(TYPES_KEY, [context.getHandler(), context.getClass()]);
+        const req = await context.switchToHttp().getRequest();
+        const authHeader = req.headers.authorization;
+        if (!authHeader) return false;
         const bearer = authHeader.split(' ')[0];
         const token = authHeader.split(' ')[1];
 
-        if (bearer !== 'Bearer' || !token)
-            throw new UnauthorizedException({ message: 'Пользователь не авторизирован' });
+        if (bearer !== 'Bearer' || !token) return false;
 
-        const user: ITokenPayload = this.jwtService.verify(token);
-        req.user = user;
-        return Boolean(user);
+        const tokenData: ITokenPayload = await this.jwtService.verify(token);
+        req.tokenData = tokenData;
+        if (!requiredTypes) {
+            return Boolean(tokenData);
+        } else {
+            return Boolean(requiredTypes.includes(tokenData.type));
+        }
     }
 }
