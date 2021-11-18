@@ -1,9 +1,9 @@
-import { AppModule } from './modules/app/app.module';
-import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { AppModule } from './modules/app/app.module';
 
-const start = async () => {
+const bootstrap = async () => {
     try {
         const app = await NestFactory.create<NestExpressApplication>(AppModule);
         const PORT = process.env.PORT || 5000;
@@ -21,4 +21,4 @@ const start = async () => {
     }
 };
 
-start();
+bootstrap();
