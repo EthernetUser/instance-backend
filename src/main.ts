@@ -15,7 +15,7 @@ const bootstrap = async () => {
             methods: ['GET', 'POST', 'PUT', 'DELETE'],
         });
         
-        //7
+        //7 hello world 
 
         await app.listen(PORT, () => console.log(`Server started on PORT ${PORT}`));
     } catch (error) {
