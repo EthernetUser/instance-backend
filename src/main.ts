@@ -14,6 +14,8 @@ const bootstrap = async () => {
             origin: ['http://localhost:3000'],
             methods: ['GET', 'POST', 'PUT', 'DELETE'],
         });
+        
+        //7
 
         await app.listen(PORT, () => console.log(`Server started on PORT ${PORT}`));
     } catch (error) {
