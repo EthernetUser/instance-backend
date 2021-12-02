@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
-import { OrganizationsService } from './Organizations.service';
+import { OrganizationsService } from './organizations.service';
 
 @Controller('api/organization')
 export class OrganizationsController {
