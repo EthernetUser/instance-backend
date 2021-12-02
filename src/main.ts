@@ -10,12 +10,7 @@ const bootstrap = async () => {
         await app.init();
 
         app.useGlobalPipes(new ValidationPipe());
-        app.enableCors({
-            origin: ['http://localhost:3000'],
-            methods: ['GET', 'POST', 'PUT', 'DELETE'],
-        });
-        
-        //7 hello world 
+        app.enableCors();
 
         await app.listen(PORT, () => console.log(`Server started on PORT ${PORT}`));
     } catch (error) {
