@@ -4,7 +4,6 @@ import { compare } from 'bcryptjs';
 import { LoginDTO } from '../../dto/login.dto';
 import { UserRegistrationDTO } from '../../dto/userRegistration.dto';
 import { GenerateResponse } from '../../helpers/generateResponse';
-import { IResponse } from '../../interfaces/Response/IResponse';
 import { User } from '../../models/user.model';
 import { IUsersResponse } from './../../interfaces/Response/IUsersResponse';
 
@@ -17,34 +16,34 @@ export class UsersService {
         return await this.userRepository.create(dto);
     }
 
-    async getUserByEmail(email: string): Promise<IResponse<IUsersResponse<User>>> {
-        const user = await this.userRepository.findOne({ where: { email }, include: { all: true } });
-        if (user)
-            return new GenerateResponse({
-                data: { user },
-            }) as IResponse<IUsersResponse<User>>;
+    async getUserByEmail(email: string): Promise<GenerateResponse<IUsersResponse<User>>> {
+        const users = await this.userRepository.findOne({ where: { email }, include: { all: true } });
+        if (users)
+            return new GenerateResponse<IUsersResponse<User>>({
+                data: { users },
+            });
         else
-            return new GenerateResponse({
+            return new GenerateResponse<null>({
                 status: HttpStatus.NOT_FOUND,
                 error: true,
                 message: USER_NOT_FOUND,
                 data: null,
-            }) as IResponse<null>;
+            });
     }
 
-    async getUserById(id: number): Promise<IResponse<IUsersResponse<User>>> {
-        const user = await this.userRepository.findByPk(id, { include: { all: true } });
-        if (user)
-            return new GenerateResponse({
-                data: { user },
-            }) as IResponse<IUsersResponse<User>>;
+    async getUserById(id: number): Promise<GenerateResponse<IUsersResponse<User>>> {
+        const users = await this.userRepository.findByPk(id, { include: { all: true } });
+        if (users)
+            return new GenerateResponse<IUsersResponse<User>>({
+                data: { users },
+            });
         else
-            return new GenerateResponse({
+            return new GenerateResponse<null>({
                 status: HttpStatus.NOT_FOUND,
                 error: true,
                 message: USER_NOT_FOUND,
                 data: null,
-            }) as IResponse<null>;
+            });
     }
 
     async validateNewUser(email: string): Promise<boolean> {

@@ -1,10 +1,10 @@
 import { HttpStatus } from '@nestjs/common';
 
-export class GenerateResponse {
+export class GenerateResponse<T> {
     public status: number;
     public error: boolean;
     public message: string;
-    public data: unknown;
+    public data: T;
     constructor({
         status = HttpStatus.OK,
         error = false,
@@ -14,7 +14,7 @@ export class GenerateResponse {
         status?: number;
         error?: boolean;
         message?: string;
-        data: any;
+        data: T;
     }) {
         this.status = status;
         this.error = error;

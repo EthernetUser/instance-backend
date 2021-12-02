@@ -1,18 +1,17 @@
-import { OrganizationsService } from './../organizations/organizations.service';
-import { ITokenPayload } from '../../interfaces/ITokenPayload';
-import { LoginDTO } from '../../dto/login.dto';
-import { UsersService } from '../users/users.service';
-import { UserRegistrationDTO } from '../../dto/userRegistration.dto';
-import { User } from '../../models/user.model';
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { hash } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import { GenerateResponse } from '../../helpers/generateResponse';
-import { IResponse } from '../../interfaces/Response/IResponse';
-import { ITokenResponse } from '../../interfaces/Response/ITokenResponse';
+import { hash } from 'bcryptjs';
 import { OrgRegistrationDTO } from 'src/dto/orgRegistration.dto';
-import { Organization } from 'src/models/organization.model';
 import { EntityTypes } from 'src/enums/entityTypes.enum';
+import { Organization } from 'src/models/organization.model';
+import { LoginDTO } from '../../dto/login.dto';
+import { UserRegistrationDTO } from '../../dto/userRegistration.dto';
+import { GenerateResponse } from '../../helpers/generateResponse';
+import { ITokenPayload } from '../../interfaces/ITokenPayload';
+import { User } from '../../models/user.model';
+import { UsersService } from '../users/users.service';
+import { IAuthResponse } from './../../interfaces/Response/IAuthResponse';
+import { OrganizationsService } from './../organizations/organizations.service';
 
 const THIS_EMAIL_WAS_ALREADY_REGISTERED = 'Данная почта уже зарегистрирована';
 const SUCCESSFUL_REGISTRATION = 'Вы были зарегистрированны';
@@ -28,89 +27,106 @@ export class AuthService {
         private organizationsService: OrganizationsService,
     ) {}
 
-    async userRegistration(dto: UserRegistrationDTO): Promise<IResponse<ITokenResponse | null>> {
+    async userRegistration(dto: UserRegistrationDTO): Promise<GenerateResponse<IAuthResponse>> {
         const IsOrgValid = await this.organizationsService.validateNewOrganization(dto.email);
         const IsUserValid = await this.usersService.validateNewUser(dto.email);
         if (!IsUserValid || !IsOrgValid)
-            return new GenerateResponse({
+            return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
                 message: THIS_EMAIL_WAS_ALREADY_REGISTERED,
                 data: null,
-            }) as IResponse<null>;
+            });
         const user = await this.usersService.createUser({ ...dto, password: await hash(dto.password, 10) });
         if (user)
-            return new GenerateResponse({
+            return new GenerateResponse<IAuthResponse>({
                 message: SUCCESSFUL_REGISTRATION,
-                data: await this.generateToken(user),
-            }) as IResponse<ITokenResponse>;
+                data: {
+                    token: (await this.generateToken(user)).token,
+                    id: user.id,
+                    type: EntityTypes.User,
+                },
+            });
         else
-            return new GenerateResponse({
+            return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
                 message: UNSUCCESSFUL_REGISTRATION,
                 data: null,
-            }) as IResponse<null>;
+            });
     }
 
-    async organizationRegistration(dto: OrgRegistrationDTO): Promise<IResponse<ITokenResponse | null>> {
+    async organizationRegistration(dto: OrgRegistrationDTO): Promise<GenerateResponse<IAuthResponse>> {
         const IsOrgValid = await this.organizationsService.validateNewOrganization(dto.email);
         const IsUserValid = await this.usersService.validateNewUser(dto.email);
         if (!IsOrgValid || !IsUserValid)
-            return new GenerateResponse({
+            return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
                 message: THIS_EMAIL_WAS_ALREADY_REGISTERED,
                 data: null,
-            }) as IResponse<null>;
+            });
         const organization = await this.organizationsService.createOrganization({
             ...dto,
             password: await hash(dto.password, 10),
         });
-        if (organization)
-            return new GenerateResponse({
+        if (organization) {
+            return new GenerateResponse<IAuthResponse>({
                 message: SUCCESSFUL_REGISTRATION,
-                data: await this.generateToken(organization),
-            }) as IResponse<ITokenResponse>;
-        else
-            return new GenerateResponse({
+                data: {
+                    token: (await this.generateToken(organization)).token,
+                    id: organization.id,
+                    type: EntityTypes.Organization,
+                },
+            });
+        } else {
+            return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
                 message: UNSUCCESSFUL_REGISTRATION,
                 data: null,
-            }) as IResponse<null>;
+            });
+        }
     }
 
-    async login(dto: LoginDTO): Promise<IResponse<ITokenResponse | null>> {
+    async login(dto: LoginDTO): Promise<GenerateResponse<IAuthResponse>> {
         const user = await this.usersService.validateUser(dto);
         if (user)
-            return new GenerateResponse({
+            return new GenerateResponse<IAuthResponse>({
                 message: SUCCESSFUL_LOGIN,
-                data: await this.generateToken(user),
-            }) as IResponse<ITokenResponse>;
+                data: {
+                    token: (await this.generateToken(user)).token,
+                    id: user.id,
+                    type: EntityTypes.User,
+                },
+            });
         else
-            return new GenerateResponse({
+            return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
                 message: UNSUCCESSFUL_LOGIN,
                 data: null,
-            }) as IResponse<null>;
+            });
     }
 
-    async organizationLogin(dto: LoginDTO): Promise<IResponse<ITokenResponse | null>> {
+    async organizationLogin(dto: LoginDTO): Promise<GenerateResponse<IAuthResponse>> {
         const organization = await this.organizationsService.validateOrganization(dto);
         if (organization)
-            return new GenerateResponse({
+            return new GenerateResponse<IAuthResponse>({
                 message: SUCCESSFUL_LOGIN,
-                data: await this.generateToken(organization),
-            }) as IResponse<ITokenResponse>;
+                data: {
+                    token: (await this.generateToken(organization)).token,
+                    id: organization.id,
+                    type: EntityTypes.Organization,
+                },
+            });
         else
-            return new GenerateResponse({
+            return new GenerateResponse<IAuthResponse>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
                 message: UNSUCCESSFUL_LOGIN,
                 data: null,
-            }) as IResponse<null>;
+            });
     }
 
     async generateToken(entity: User | Organization) {

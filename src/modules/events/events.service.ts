@@ -7,7 +7,6 @@ import { CreateEventDTO } from '../../dto/createEvent.dto';
 import { UpdateEventDTO } from '../../dto/updateEvent.dto';
 import { GenerateResponse } from '../../helpers/generateResponse';
 import { IEventsResponse } from '../../interfaces/Response/IEventsResponse';
-import { IResponse } from '../../interfaces/Response/IResponse';
 import { Event } from '../../models/event.model';
 
 const SUCCESSFUL_CREATED = 'Занятие было создано';
@@ -31,8 +30,8 @@ export class EventsService {
         @InjectModel(User) private userRepository: typeof User,
     ) {}
 
-    async getEventById(id: number): Promise<IResponse<IEventsResponse<Event>>> {
-        const event = await this.eventRepository.findByPk(id, {
+    async getEventById(id: number): Promise<GenerateResponse<IEventsResponse<Event>>> {
+        const events = await this.eventRepository.findByPk(id, {
             include: [
                 {
                     model: User,
@@ -48,128 +47,130 @@ export class EventsService {
                 },
             ],
         });
-        if (event)
-            return new GenerateResponse({
-                data: { event },
-            }) as IResponse<IEventsResponse<Event>>;
+        if (events)
+            return new GenerateResponse<IEventsResponse<Event>>({
+                data: { events },
+            });
         else
-            return new GenerateResponse({
+            return new GenerateResponse<null>({
                 status: HttpStatus.NOT_FOUND,
                 error: true,
                 message: EVENT_NOT_FOUND,
                 data: null,
-            }) as IResponse<null>;
+            });
     }
 
-    async getAllEvents(): Promise<IResponse<IEventsResponse<Event[]>>> {
+    async getAllEvents(): Promise<GenerateResponse<IEventsResponse<Event[]>>> {
         const events = await this.eventRepository.findAll();
         if (events.length)
-            return new GenerateResponse({
+            return new GenerateResponse<IEventsResponse<Event[]>>({
                 data: { events },
-            }) as IResponse<IEventsResponse<Event[]>>;
+            });
         else
-            return new GenerateResponse({
+            return new GenerateResponse<null>({
                 status: HttpStatus.NOT_FOUND,
                 error: true,
                 message: EVENT_NOT_FOUND,
                 data: null,
-            }) as IResponse<null>;
+            });
     }
 
-    async getEventsFromPage(page: number): Promise<IResponse<IEventsResponse<{ rows: Event[]; count: number }>>> {
+    async getEventsFromPage(
+        page: number,
+    ): Promise<GenerateResponse<IEventsResponse<{ rows: Event[]; count: number }>>> {
         const limit = Number(process.env.EVENT_PAGE_LIMIT);
         const offset = limit * page;
         const events = await this.eventRepository.findAndCountAll({ limit, offset, order: [['id', 'DESC']] });
         if (events.rows.length)
-            return new GenerateResponse({
-                data: { ...events },
-            }) as IResponse<IEventsResponse<{ rows: Event[]; count: number }>>;
+            return new GenerateResponse<IEventsResponse<{ rows: Event[]; count: number }>>({
+                data: { events },
+            });
         else
-            return new GenerateResponse({
+            return new GenerateResponse<null>({
                 status: HttpStatus.NOT_FOUND,
                 error: true,
                 message: EVENT_NOT_FOUND,
                 data: null,
-            }) as IResponse<null>;
+            });
     }
 
-    async getEventsLastLimited(limit: number): Promise<IResponse<IEventsResponse<Event[]>>> {
+    async getEventsLastLimited(limit: number): Promise<GenerateResponse<IEventsResponse<Event[]>>> {
         const events = await this.eventRepository.findAll({ limit, order: [['id', 'DESC']] });
         if (events.length)
-            return new GenerateResponse({
+            return new GenerateResponse<IEventsResponse<Event[]>>({
                 data: { events },
-            }) as IResponse<IEventsResponse<Event[]>>;
+            });
         else
-            return new GenerateResponse({
+            return new GenerateResponse<null>({
                 status: HttpStatus.NOT_FOUND,
                 error: true,
                 message: EVENT_NOT_FOUND,
                 data: null,
-            }) as IResponse<null>;
+            });
     }
 
-    async createEvent(dto: CreateEventDTO, organization: ITokenPayload): Promise<IResponse<null>> {
+    async createEvent(dto: CreateEventDTO, organization: ITokenPayload): Promise<GenerateResponse<null>> {
         const event = await this.eventRepository.create({ ...dto, organizationId: organization.id });
         if (event)
-            return new GenerateResponse({
+            return new GenerateResponse<null>({
                 message: SUCCESSFUL_CREATED,
                 data: null,
-            }) as IResponse<null>;
+            });
         else
-            return new GenerateResponse({
+            return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
                 message: UNSUCCESSFUL_CREATED,
                 data: null,
-            }) as IResponse<null>;
+            });
     }
 
     async updateEvent(
         { id, title, description, date, location }: UpdateEventDTO,
         organization: ITokenPayload,
-    ): Promise<IResponse<null>> {
+    ): Promise<GenerateResponse<null>> {
         const event = await this.eventRepository.update(
             { title, description, date, location },
             { where: { id, organizationId: organization.id } },
         );
         if (event)
-            return new GenerateResponse({
+            return new GenerateResponse<null>({
                 message: SUCCESSFUL_UPDATED,
                 data: null,
-            }) as IResponse<null>;
+            });
         else
-            return new GenerateResponse({
+            return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
                 message: UNSUCCESSFUL_UPDATED,
                 data: null,
-            }) as IResponse<null>;
+            });
     }
 
-    async deleteEvent(id: number, organization: ITokenPayload): Promise<IResponse<null>> {
+    async deleteEvent(id: number, organization: ITokenPayload): Promise<GenerateResponse<null>> {
         const result = await this.eventRepository.destroy({ where: { id, organizationId: organization.id } });
         if (result > 0)
-            return new GenerateResponse({
+            return new GenerateResponse<null>({
                 message: SUCCESSFUL_DELETED,
                 data: null,
-            }) as IResponse<null>;
+            });
         else
-            return new GenerateResponse({
+            return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
                 message: UNSUCCESSFUL_DELETED,
                 data: null,
-            }) as IResponse<null>;
+            });
     }
 
     async followEvent(eventId: number, user: ITokenPayload) {
         if (!user) {
-            return new GenerateResponse({
+            return new GenerateResponse<null>({
                 status: HttpStatus.UNAUTHORIZED,
                 error: true,
                 message: WRONG_TOKEN,
                 data: null,
-            }) as IResponse<null>;
+            });
         }
 
         const result = await this.getEventById(eventId);
@@ -177,47 +178,47 @@ export class EventsService {
 
         const candidate = await this.userRepository.findByPk(user.id, { include: { all: true } });
         if (!candidate) {
-            return new GenerateResponse({
+            return new GenerateResponse<null>({
                 status: HttpStatus.UNAUTHORIZED,
                 error: true,
                 message: WRONG_TOKEN,
                 data: null,
-            }) as IResponse<null>;
+            });
         }
         const userHasEvent = await candidate.$has('followedEvents', eventId);
         if (!userHasEvent) {
             const countEvents = await candidate.$count('followedEvents');
             if (countEvents <= 0) {
                 await candidate.$set('followedEvents', [eventId]);
-                return new GenerateResponse({
+                return new GenerateResponse<null>({
                     message: SUCCESSFUL_FOLLOW,
                     data: null,
-                }) as IResponse<null>;
+                });
             } else {
                 await candidate.$add('followedEvents', eventId);
-                return new GenerateResponse({
+                return new GenerateResponse<null>({
                     message: SUCCESSFUL_FOLLOW,
                     data: null,
-                }) as IResponse<null>;
+                });
             }
         } else {
-            return new GenerateResponse({
+            return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
                 message: ALREADY_FOLLOW,
                 data: null,
-            }) as IResponse<null>;
+            });
         }
     }
 
     async unfollowEvent(eventId: number, user: ITokenPayload) {
         if (!user) {
-            return new GenerateResponse({
+            return new GenerateResponse<null>({
                 status: HttpStatus.UNAUTHORIZED,
                 error: true,
                 message: WRONG_TOKEN,
                 data: null,
-            }) as IResponse<null>;
+            });
         }
 
         const result = await this.getEventById(eventId);
@@ -228,25 +229,25 @@ export class EventsService {
         if (userHasEvent) {
             const count = await candidate.$remove('followedEvents', eventId);
             if (count > 0) {
-                return new GenerateResponse({
+                return new GenerateResponse<null>({
                     message: SUCCESSFUL_UNFOLLOW,
                     data: null,
-                }) as IResponse<null>;
+                });
             } else {
-                return new GenerateResponse({
+                return new GenerateResponse<null>({
                     status: HttpStatus.INTERNAL_SERVER_ERROR,
                     error: true,
                     message: SERVER_ERROR,
                     data: null,
-                }) as IResponse<null>;
+                });
             }
         } else {
-            return new GenerateResponse({
+            return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
                 message: WRONG_DATA,
                 data: null,
-            }) as IResponse<null>;
+            });
         }
     }
 }
