@@ -5,7 +5,7 @@ import { TYPES } from 'src/decorators/jwt-type.decorator';
 import { ITokenPayload } from 'src/interfaces/ITokenPayload';
 import { CreateCommentDTO } from '../../dto/createComment.dto';
 import { UpdateCommentDTO } from '../../dto/updateComment.dto';
-import { JwtAuthGuard } from './../../guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { CommentsService } from './comments.service';
 
 @Controller('api/comments')

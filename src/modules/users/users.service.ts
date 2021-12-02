@@ -5,9 +5,9 @@ import { LoginDTO } from '../../dto/login.dto';
 import { UserRegistrationDTO } from '../../dto/userRegistration.dto';
 import { GenerateResponse } from '../../helpers/generateResponse';
 import { User } from '../../models/user.model';
-import { IUsersResponse } from './../../interfaces/Response/IUsersResponse';
+import { IUsersResponse } from '../../interfaces/Response/IUsersResponse';
+import { usersServiceMock } from '../../__mock__/users-service.mock';
 
-const USER_NOT_FOUND = 'Пользователь не найден';
 @Injectable()
 export class UsersService {
     constructor(@InjectModel(User) private userRepository: typeof User) {}
@@ -26,7 +26,7 @@ export class UsersService {
             return new GenerateResponse<null>({
                 status: HttpStatus.NOT_FOUND,
                 error: true,
-                message: USER_NOT_FOUND,
+                message: usersServiceMock.USER_NOT_FOUND,
                 data: null,
             });
     }
@@ -41,7 +41,7 @@ export class UsersService {
             return new GenerateResponse<null>({
                 status: HttpStatus.NOT_FOUND,
                 error: true,
-                message: USER_NOT_FOUND,
+                message: usersServiceMock.USER_NOT_FOUND,
                 data: null,
             });
     }

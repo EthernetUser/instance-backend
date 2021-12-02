@@ -4,8 +4,8 @@ import { TYPES } from 'src/decorators/jwt-type.decorator';
 import { ITokenPayload } from 'src/interfaces/ITokenPayload';
 import { CreateEventDTO } from '../../dto/createEvent.dto';
 import { UpdateEventDTO } from '../../dto/updateEvent.dto';
-import { EntityTypes } from './../../enums/entityTypes.enum';
-import { JwtAuthGuard } from './../../guards/jwt-auth.guard';
+import { EntityTypes } from '../../enums/entityTypes.enum';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { EventsService } from './events.service';
 
 @Controller('/api/event')

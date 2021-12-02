@@ -10,14 +10,9 @@ import { GenerateResponse } from '../../helpers/generateResponse';
 import { ITokenPayload } from '../../interfaces/ITokenPayload';
 import { User } from '../../models/user.model';
 import { UsersService } from '../users/users.service';
-import { IAuthResponse } from './../../interfaces/Response/IAuthResponse';
-import { OrganizationsService } from './../organizations/organizations.service';
-
-const THIS_EMAIL_WAS_ALREADY_REGISTERED = 'Данная почта уже зарегистрирована';
-const SUCCESSFUL_REGISTRATION = 'Вы были зарегистрированны';
-const UNSUCCESSFUL_REGISTRATION = 'Ошибка регистрации';
-const SUCCESSFUL_LOGIN = 'Вы вошли в аккаунт';
-const UNSUCCESSFUL_LOGIN = 'Ошибка входа, данные не верны';
+import { IAuthResponse } from '../../interfaces/Response/IAuthResponse';
+import { OrganizationsService } from '../organizations/organizations.service';
+import { authServiceMock } from '../../__mock__/auth-service.mock';
 
 @Injectable()
 export class AuthService {
@@ -34,13 +29,13 @@ export class AuthService {
             return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
-                message: THIS_EMAIL_WAS_ALREADY_REGISTERED,
+                message: authServiceMock.THIS_EMAIL_WAS_ALREADY_REGISTERED,
                 data: null,
             });
         const user = await this.usersService.createUser({ ...dto, password: await hash(dto.password, 10) });
         if (user)
             return new GenerateResponse<IAuthResponse>({
-                message: SUCCESSFUL_REGISTRATION,
+                message: authServiceMock.SUCCESSFUL_REGISTRATION,
                 data: {
                     token: (await this.generateToken(user)).token,
                     id: user.id,
@@ -51,7 +46,7 @@ export class AuthService {
             return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
-                message: UNSUCCESSFUL_REGISTRATION,
+                message: authServiceMock.UNSUCCESSFUL_REGISTRATION,
                 data: null,
             });
     }
@@ -63,7 +58,7 @@ export class AuthService {
             return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
-                message: THIS_EMAIL_WAS_ALREADY_REGISTERED,
+                message: authServiceMock.THIS_EMAIL_WAS_ALREADY_REGISTERED,
                 data: null,
             });
         const organization = await this.organizationsService.createOrganization({
@@ -72,7 +67,7 @@ export class AuthService {
         });
         if (organization) {
             return new GenerateResponse<IAuthResponse>({
-                message: SUCCESSFUL_REGISTRATION,
+                message: authServiceMock.SUCCESSFUL_REGISTRATION,
                 data: {
                     token: (await this.generateToken(organization)).token,
                     id: organization.id,
@@ -83,7 +78,7 @@ export class AuthService {
             return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
-                message: UNSUCCESSFUL_REGISTRATION,
+                message: authServiceMock.UNSUCCESSFUL_REGISTRATION,
                 data: null,
             });
         }
@@ -93,7 +88,7 @@ export class AuthService {
         const user = await this.usersService.validateUser(dto);
         if (user)
             return new GenerateResponse<IAuthResponse>({
-                message: SUCCESSFUL_LOGIN,
+                message: authServiceMock.SUCCESSFUL_LOGIN,
                 data: {
                     token: (await this.generateToken(user)).token,
                     id: user.id,
@@ -104,7 +99,7 @@ export class AuthService {
             return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
-                message: UNSUCCESSFUL_LOGIN,
+                message: authServiceMock.UNSUCCESSFUL_LOGIN,
                 data: null,
             });
     }
@@ -113,7 +108,7 @@ export class AuthService {
         const organization = await this.organizationsService.validateOrganization(dto);
         if (organization)
             return new GenerateResponse<IAuthResponse>({
-                message: SUCCESSFUL_LOGIN,
+                message: authServiceMock.SUCCESSFUL_LOGIN,
                 data: {
                     token: (await this.generateToken(organization)).token,
                     id: organization.id,
@@ -124,7 +119,7 @@ export class AuthService {
             return new GenerateResponse<IAuthResponse>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
-                message: UNSUCCESSFUL_LOGIN,
+                message: authServiceMock.UNSUCCESSFUL_LOGIN,
                 data: null,
             });
     }

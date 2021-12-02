@@ -8,20 +8,7 @@ import { UpdateEventDTO } from '../../dto/updateEvent.dto';
 import { GenerateResponse } from '../../helpers/generateResponse';
 import { IEventsResponse } from '../../interfaces/Response/IEventsResponse';
 import { Event } from '../../models/event.model';
-
-const SUCCESSFUL_CREATED = 'Занятие было создано';
-const UNSUCCESSFUL_CREATED = 'Занятие не было создано';
-const SUCCESSFUL_UPDATED = 'Занятие было обновлено';
-const UNSUCCESSFUL_UPDATED = 'Занятие не было обновлено';
-const SUCCESSFUL_DELETED = 'Занятие было удалено';
-const UNSUCCESSFUL_DELETED = 'Занятие не было удалено';
-const EVENT_NOT_FOUND = 'Занятие не найдено';
-const SUCCESSFUL_FOLLOW = 'Вы были записаны на мероприятие';
-const ALREADY_FOLLOW = 'Вы уже записанны за мероприятие';
-const SUCCESSFUL_UNFOLLOW = 'Вы больше не записанны на мероприятие';
-const WRONG_DATA = 'Неверные данные';
-const WRONG_TOKEN = 'Неверный токен';
-const SERVER_ERROR = 'Ошибка сервера';
+import { eventsServiceMock } from '../../__mock__/events-service.mock';
 
 @Injectable()
 export class EventsService {
@@ -55,7 +42,7 @@ export class EventsService {
             return new GenerateResponse<null>({
                 status: HttpStatus.NOT_FOUND,
                 error: true,
-                message: EVENT_NOT_FOUND,
+                message: eventsServiceMock.EVENT_NOT_FOUND,
                 data: null,
             });
     }
@@ -70,7 +57,7 @@ export class EventsService {
             return new GenerateResponse<null>({
                 status: HttpStatus.NOT_FOUND,
                 error: true,
-                message: EVENT_NOT_FOUND,
+                message: eventsServiceMock.EVENT_NOT_FOUND,
                 data: null,
             });
     }
@@ -89,7 +76,7 @@ export class EventsService {
             return new GenerateResponse<null>({
                 status: HttpStatus.NOT_FOUND,
                 error: true,
-                message: EVENT_NOT_FOUND,
+                message: eventsServiceMock.EVENT_NOT_FOUND,
                 data: null,
             });
     }
@@ -104,7 +91,7 @@ export class EventsService {
             return new GenerateResponse<null>({
                 status: HttpStatus.NOT_FOUND,
                 error: true,
-                message: EVENT_NOT_FOUND,
+                message: eventsServiceMock.EVENT_NOT_FOUND,
                 data: null,
             });
     }
@@ -113,14 +100,14 @@ export class EventsService {
         const event = await this.eventRepository.create({ ...dto, organizationId: organization.id });
         if (event)
             return new GenerateResponse<null>({
-                message: SUCCESSFUL_CREATED,
+                message: eventsServiceMock.SUCCESSFUL_CREATED,
                 data: null,
             });
         else
             return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
-                message: UNSUCCESSFUL_CREATED,
+                message: eventsServiceMock.UNSUCCESSFUL_CREATED,
                 data: null,
             });
     }
@@ -135,14 +122,14 @@ export class EventsService {
         );
         if (event)
             return new GenerateResponse<null>({
-                message: SUCCESSFUL_UPDATED,
+                message: eventsServiceMock.SUCCESSFUL_UPDATED,
                 data: null,
             });
         else
             return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
-                message: UNSUCCESSFUL_UPDATED,
+                message: eventsServiceMock.UNSUCCESSFUL_UPDATED,
                 data: null,
             });
     }
@@ -151,14 +138,14 @@ export class EventsService {
         const result = await this.eventRepository.destroy({ where: { id, organizationId: organization.id } });
         if (result > 0)
             return new GenerateResponse<null>({
-                message: SUCCESSFUL_DELETED,
+                message: eventsServiceMock.SUCCESSFUL_DELETED,
                 data: null,
             });
         else
             return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
-                message: UNSUCCESSFUL_DELETED,
+                message: eventsServiceMock.UNSUCCESSFUL_DELETED,
                 data: null,
             });
     }
@@ -168,7 +155,7 @@ export class EventsService {
             return new GenerateResponse<null>({
                 status: HttpStatus.UNAUTHORIZED,
                 error: true,
-                message: WRONG_TOKEN,
+                message: eventsServiceMock.WRONG_TOKEN,
                 data: null,
             });
         }
@@ -181,7 +168,7 @@ export class EventsService {
             return new GenerateResponse<null>({
                 status: HttpStatus.UNAUTHORIZED,
                 error: true,
-                message: WRONG_TOKEN,
+                message: eventsServiceMock.WRONG_TOKEN,
                 data: null,
             });
         }
@@ -191,13 +178,13 @@ export class EventsService {
             if (countEvents <= 0) {
                 await candidate.$set('followedEvents', [eventId]);
                 return new GenerateResponse<null>({
-                    message: SUCCESSFUL_FOLLOW,
+                    message: eventsServiceMock.SUCCESSFUL_FOLLOW,
                     data: null,
                 });
             } else {
                 await candidate.$add('followedEvents', eventId);
                 return new GenerateResponse<null>({
-                    message: SUCCESSFUL_FOLLOW,
+                    message: eventsServiceMock.SUCCESSFUL_FOLLOW,
                     data: null,
                 });
             }
@@ -205,7 +192,7 @@ export class EventsService {
             return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
-                message: ALREADY_FOLLOW,
+                message: eventsServiceMock.ALREADY_FOLLOW,
                 data: null,
             });
         }
@@ -216,7 +203,7 @@ export class EventsService {
             return new GenerateResponse<null>({
                 status: HttpStatus.UNAUTHORIZED,
                 error: true,
-                message: WRONG_TOKEN,
+                message: eventsServiceMock.WRONG_TOKEN,
                 data: null,
             });
         }
@@ -230,14 +217,14 @@ export class EventsService {
             const count = await candidate.$remove('followedEvents', eventId);
             if (count > 0) {
                 return new GenerateResponse<null>({
-                    message: SUCCESSFUL_UNFOLLOW,
+                    message: eventsServiceMock.SUCCESSFUL_UNFOLLOW,
                     data: null,
                 });
             } else {
                 return new GenerateResponse<null>({
                     status: HttpStatus.INTERNAL_SERVER_ERROR,
                     error: true,
-                    message: SERVER_ERROR,
+                    message: eventsServiceMock.SERVER_ERROR,
                     data: null,
                 });
             }
@@ -245,7 +232,7 @@ export class EventsService {
             return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
-                message: WRONG_DATA,
+                message: eventsServiceMock.WRONG_DATA,
                 data: null,
             });
         }

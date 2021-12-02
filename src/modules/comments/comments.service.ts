@@ -6,14 +6,7 @@ import { CreateCommentDTO } from '../../dto/createComment.dto';
 import { UpdateCommentDTO } from '../../dto/updateComment.dto';
 import { GenerateResponse } from '../../helpers/generateResponse';
 import { ICommentsResponse } from '../../interfaces/Response/ICommentsResponse';
-
-const COMMENTS_DONT_EXIST = 'Комментариев нет';
-const COMMENT_WAS_CREATED = 'Комментарий был опубликован';
-const COMMENT_WASNT_CREATED = 'Комментарий не был опубликован';
-const COMMENT_WAS_UPDATED = 'Комментарий был отредактирован';
-const COMMENT_WASNT_UPDATED = 'Комментарий не был отредактирован';
-const COMMENT_WAS_DELETED = 'Комментарий был удален';
-const COMMENT_WASNT_DELETED = 'Комментарий не был удален';
+import { commentsServiceMock } from '../../__mock__/comments-service.mock';
 
 @Injectable()
 export class CommentsService {
@@ -28,7 +21,7 @@ export class CommentsService {
         else
             return new GenerateResponse<null>({
                 status: HttpStatus.NOT_FOUND,
-                message: COMMENTS_DONT_EXIST,
+                message: commentsServiceMock.COMMENTS_DONT_EXIST,
                 data: null,
             });
     }
@@ -42,7 +35,7 @@ export class CommentsService {
         else
             return new GenerateResponse<null>({
                 status: HttpStatus.NOT_FOUND,
-                message: COMMENTS_DONT_EXIST,
+                message: commentsServiceMock.COMMENTS_DONT_EXIST,
                 data: null,
             });
     }
@@ -51,14 +44,14 @@ export class CommentsService {
         const comment = await this.commentsRepository.create({ ...dto, userId: entity.id });
         if (comment)
             return new GenerateResponse<null>({
-                message: COMMENT_WAS_CREATED,
+                message: commentsServiceMock.COMMENT_WAS_CREATED,
                 data: null,
             });
         else
             return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
-                message: COMMENT_WASNT_CREATED,
+                message: commentsServiceMock.COMMENT_WASNT_CREATED,
                 data: null,
             });
     }
@@ -67,14 +60,14 @@ export class CommentsService {
         const comment = await this.commentsRepository.update(dto, { where: { id: dto.id, userId: entity.id } });
         if (comment)
             return new GenerateResponse<null>({
-                message: COMMENT_WAS_UPDATED,
+                message: commentsServiceMock.COMMENT_WAS_UPDATED,
                 data: null,
             });
         else
             return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
-                message: COMMENT_WASNT_UPDATED,
+                message: commentsServiceMock.COMMENT_WASNT_UPDATED,
                 data: null,
             });
     }
@@ -83,14 +76,14 @@ export class CommentsService {
         const result = await this.commentsRepository.destroy({ where: { id, userId: entity.id } });
         if (result)
             return new GenerateResponse<null>({
-                message: COMMENT_WAS_DELETED,
+                message: commentsServiceMock.COMMENT_WAS_DELETED,
                 data: null,
             });
         else
             return new GenerateResponse<null>({
                 status: HttpStatus.BAD_REQUEST,
                 error: true,
-                message: COMMENT_WASNT_DELETED,
+                message: commentsServiceMock.COMMENT_WASNT_DELETED,
                 data: null,
             });
     }

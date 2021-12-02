@@ -6,8 +6,7 @@ import { LoginDTO } from '../../dto/login.dto';
 import { GenerateResponse } from '../../helpers/generateResponse';
 import { Organization } from '../../models/organization.model';
 import { IOrganizationsResponse } from '../../interfaces/Response/IOrganizationsResponse';
-
-const USER_NOT_FOUND = 'Пользователь не найден';
+import { organizationsServiceMock } from '../../__mock__/organizations-service.mock';
 
 @Injectable()
 export class OrganizationsService {
@@ -27,7 +26,7 @@ export class OrganizationsService {
             return new GenerateResponse({
                 status: HttpStatus.NOT_FOUND,
                 error: true,
-                message: USER_NOT_FOUND,
+                message: organizationsServiceMock.USER_NOT_FOUND,
                 data: null,
             }) as GenerateResponse<null>;
     }
@@ -42,7 +41,7 @@ export class OrganizationsService {
             return new GenerateResponse({
                 status: HttpStatus.NOT_FOUND,
                 error: true,
-                message: USER_NOT_FOUND,
+                message: organizationsServiceMock.USER_NOT_FOUND,
                 data: null,
             }) as GenerateResponse<null>;
     }
