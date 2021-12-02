@@ -5,7 +5,7 @@ import { OrgRegistrationDTO } from 'src/dto/orgRegistration.dto';
 import { LoginDTO } from '../../dto/login.dto';
 import { GenerateResponse } from '../../helpers/generateResponse';
 import { Organization } from '../../models/organization.model';
-import { IOrganizationsResponse } from './../../interfaces/Response/IOrganizationsResponse';
+import { IOrganizationsResponse } from '../../interfaces/Response/IOrganizationsResponse';
 
 const USER_NOT_FOUND = 'Пользователь не найден';
 
