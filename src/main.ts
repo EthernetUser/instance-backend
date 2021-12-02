@@ -7,11 +7,11 @@ const bootstrap = async () => {
     try {
         const app = await NestFactory.create<NestExpressApplication>(AppModule);
         const PORT = process.env.PORT || 5000;
-        await app.init();
 
         app.useGlobalPipes(new ValidationPipe());
         app.enableCors();
 
+        await app.init();
         await app.listen(PORT, () => console.log(`Server started on PORT ${PORT}`));
     } catch (error) {
         console.log(error);
